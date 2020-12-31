@@ -1,0 +1,83 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Register {% endblock %}
+
+{% block main %}
+    <style>
+        .registercard {
+            min-height: 500px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin-top: 15px;
+            margin-bottom: 70px;
+        }
+        label {
+            font-size: .9em;
+            font-weight: 600;
+        }
+        label.required:after {
+            color: red;
+            content: "*";
+            font-size: 1.8em;
+            line-height: .8em;
+            vertical-align: bottom;
+        }
+        .createaccountbtn, .createaccountbtn:hover {
+            min-width: 250px;
+            width: 60%;
+            background-image: linear-gradient(to top left, rgb(0, 192, 80), rgb(94, 236, 255));
+            color: black;
+            border: none;
+            box-shadow: black 1px 1px 3px 0px;
+        }
+        .createaccountbtn:hover {
+            box-shadow: rgb(0, 157, 255) 0px 0px 0px 3px;
+            color: rgb(70, 70, 70);
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="max-width: 720px; min-width: fit-content;">
+            <div class="rounded registercard p-4 d-flex flex-column">
+                <h3 class="specialunderline">Register</h3>
+                <form class="h-100 p-2 d-flex flex-column" enhance>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="coachname" class="form-label required">Coach's Name </label>
+                            <input name="coachname" id="coachname" type="text" class="form-control" placeholder="Name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label required">Email Address (Username) </label>
+                            <input name="email" id="email" type="email" class="form-control" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="number" class="form-label required">Phone Number </label>
+                            <input name="number" id="number" type="text" class="form-control" placeholder="Phone Number" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="school" class="form-label required">School </label>
+                            <input name="school" id="school" type="text" class="form-control" placeholder="School" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label required">Password </label>
+                            <input name="password" id="password" type="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="retypepassword" class="form-label required">Retype Password </label>
+                            <input name="retypepassword" id="retypepassword" type="password" class="form-control" placeholder="Retype Password" required>
+                        </div>
+                    </div>
+                    <div class="row flex-grow-1">
+                        <div class="col-12 mt-auto text-center">
+                            <button class="btn btn-success btn-lg fw-bold createaccountbtn mt-2" type="submit">Create Account</button>
+                            <h6 class="mx-auto mt-3" style="max-width: 400px;">After creating your account, add students to your team and continue registering for tournaments</h6>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

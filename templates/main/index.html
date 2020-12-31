@@ -1,0 +1,116 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block main %}
+    <style>
+        html, body {
+            overflow-x: hidden;
+        }
+        section {
+            margin: 5px 5px 0 5px;
+            border-radius: 10px;
+        }
+        .topsection {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            min-height: 300px;
+            background-image: url("/static/imgs/math.jpg");
+            background-position: 50% 30%;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .imageheading {
+            margin: 20px 10% 10px 0;
+            text-align: right;
+            text-shadow: rgba(0, 0, 0, 0.5) -1px 1px 3px;
+        }
+        .imagebuttonsbox {
+            flex: 1 1 0%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            margin: 0 10% 40px 0;
+        }
+        .imagebutton, .imagebutton:hover {
+            width: 180px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: black 0px 3px 8px -1px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+        }
+        .imagebutton:hover {
+            box-shadow: none;
+        }
+        .registerbutton {
+            background-image: linear-gradient(135deg, rgb(56, 152, 236), rgb(22, 68, 218));
+        }
+        .loginbutton {
+            background-image: linear-gradient(135deg, rgb(56, 236, 146), rgb(40, 150, 95));
+        }
+        .middlesection {
+            padding: 10px;
+            background-color: rgb(65, 68, 79);
+        }
+        .contentheader {
+            margin: 0px auto 10px auto;
+            padding-left: 20px;
+            padding-right: 20px;
+            min-width: 200px;
+            border-bottom: 3px solid rgb(131, 0, 65);
+            border-radius: 5px;
+            text-align: center;
+        }
+        .content {
+            width: 330px;
+            margin: 0 auto;
+            text-align: justify;
+            line-height: 1.2em;
+            text-align-last: center;
+        }
+        .contentbutton, .contentbutton:hover {
+            margin: 10px auto 0 auto;
+            padding: 6px 15px;
+            background-image: linear-gradient(135deg, rgb(30, 0, 255), rgb(25, 2, 152));
+            box-shadow: black 2px 2px 8px 0px;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+        }
+        .contentbutton:hover {
+            box-shadow: none;
+        }
+    </style>
+    <section class="topsection">
+        <h1 class="imageheading slidefromright">Experience Math <br/>Like Never Before</h1>
+        <div class="imagebuttonsbox slidefromright">
+            <a href="/register" class="imagebutton registerbutton">Register</a>
+            <a href="/login" class="imagebutton loginbutton">Login</a>
+        </div>
+    </section>
+    <section class="middlesection">
+        <h1 class="m-0 text-center text-white">Welcome To Texas Math Contests</h1>
+    </section>
+    <section class="mt-3 p-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 d-flex flex-column mb-4">
+                    <h3 class="contentheader">Virtual Tournaments</h3>
+                    <p class="content">We are organizing a series of Elementary & Middle School weekly virtual tournaments for Number Sense, Math, and Science. Both your registration and payment are done online. The $5 fee per event also includes an optional 1-hour training session after 5:30 PM on the day of each tournament. Further details can be found in the links below. </p>
+                    <a href="/vtinstructions" class="contentbutton">Registration Instructions</a>
+                    <a href="/vtschedule" class="contentbutton">Virtual Tournament Schedule</a>
+                    <a href="/tournaments/virtual" class="contentbutton">Virtual Tournaments Page</a>
+                </div>
+                <div class="col-md-6 d-flex flex-column mb-4">
+                    <h3 class="contentheader">About Us</h3>
+                    <p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. </p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
