@@ -15,11 +15,11 @@ class Coach(db.Model):
     owned_tourneys = relationship("Tourney", backref="coach")
     attending_tourneys = relationship("Tourney", secondary="tourneycoach")
 
-    def __init__(self, *args):
+    def __init__(self, args):
         self.name = args[0]
         self.email = args[1]
         self.phone = args[2]
-        self.school = args[3]
+        self.school_name = args[3]
         self.password = args[4]
 
 
@@ -31,6 +31,12 @@ class Student(db.Model):
     grade = Column(Integer, nullable=False)
     coach_id = Column(Integer, ForeignKey("coaches.id"), nullable=False)
     tourneys = relationship("Tourney", secondary="tourneystudent")
+
+    def __init__(self, args):
+        self.first_name = args[0]
+        self.last_name = args[1]
+        self.grade = args[2]
+        self.coach_id = args[3]
 
 class Tourney(db.Model):
     __tablename__ = "tourneys"

@@ -37,6 +37,7 @@
         .imagebutton, .imagebutton:hover {
             width: 180px;
             margin-top: 10px;
+            padding: 2px 5px;
             border-radius: 5px;
             box-shadow: black 0px 3px 8px -1px;
             font-size: 1.5em;
@@ -52,6 +53,14 @@
         }
         .loginbutton {
             background-image: linear-gradient(135deg, rgb(56, 236, 146), rgb(40, 150, 95));
+        }
+        .studentsbutton, .studentsbutton:hover {
+            width: 220px;
+            background-image: linear-gradient(135deg, rgb(0, 195, 255), rgb(0, 63, 199));
+        }
+        .tournamentsbutton, .tournamentsbutton:hover {
+            width: 220px;
+            background-image: linear-gradient(135deg, rgb(0, 223, 167), rgb(0, 196, 163));
         }
         .middlesection {
             padding: 10px;
@@ -88,10 +97,17 @@
     </style>
     <section class="topsection">
         <h1 class="imageheading slidefromright">Experience Math <br/>Like Never Before</h1>
-        <div class="imagebuttonsbox slidefromright">
-            <a href="/register" class="imagebutton registerbutton">Register</a>
-            <a href="/login" class="imagebutton loginbutton">Login</a>
-        </div>
+        {% if "id" in session %}
+            <div class="imagebuttonsbox slidefromright">
+                <a href="/students" class="imagebutton studentsbutton">Your Students</a>
+                <a href="/tournaments" class="imagebutton tournamentsbutton">Tournaments</a>
+            </div>
+        {% else %}
+            <div class="imagebuttonsbox slidefromright">
+                <a href="/register" class="imagebutton registerbutton">Register</a>
+                <a href="/login" class="imagebutton loginbutton">Login</a>
+            </div>
+        {% endif %}
     </section>
     <section class="middlesection">
         <h1 class="m-0 text-center text-white">Welcome To Texas Math Contests</h1>
@@ -102,7 +118,7 @@
                 <div class="col-md-6 d-flex flex-column mb-4">
                     <h3 class="contentheader">Virtual Tournaments</h3>
                     <p class="content">We are organizing a series of Elementary & Middle School weekly virtual tournaments for Number Sense, Math, and Science. Both your registration and payment are done online. The $5 fee per event also includes an optional 1-hour training session after 5:30 PM on the day of each tournament. Further details can be found in the links below. </p>
-                    <a href="/vtinstructions" class="contentbutton">Registration Instructions</a>
+                    <a href="/vtinstructions" class="contentbutton mt-3">Registration Instructions</a>
                     <a href="/vtschedule" class="contentbutton">Virtual Tournament Schedule</a>
                     <a href="/tournaments/virtual" class="contentbutton">Virtual Tournaments Page</a>
                 </div>

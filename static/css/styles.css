@@ -16,6 +16,21 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
+.css-serial {
+    counter-reset: serial-number;
+}  
+.css-serial tbody td:first-child:before {
+    counter-increment: serial-number;
+    content: counter(serial-number);
+}
+.ordinal {
+	font-variant-numeric: ordinal;
+	-moz-font-feature-settings: "ordn";
+	-ms-font-feature-settings: "ordn";
+	-webkit-font-feature-settings: "ordn";
+	font-feature-settings: "ordn";
+}
+
 .navbrand {
     display: flex;
     padding-top: 5px;

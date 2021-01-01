@@ -1,0 +1,31 @@
+{% macro student_row(student) -%}
+    <tr stid="{{ student.id }}">
+        <td></td>
+        <td>
+            <input class="form-control form-control-sm stedit" type="text" name="first_name" value="{{ student.first_name }}" hidden>
+            <span class="sttext" name="first_name">{{ student.first_name }}</span>
+        </td>
+        <td>
+            <input class="form-control form-control-sm stedit" type="text" name="last_name" value="{{ student.last_name }}" hidden>
+            <span class="sttext" name="last_name">{{ student.last_name }}</span>
+        </td>
+        <td>
+            <input class="form-control form-control-sm stedit" type="number" min="3" max="8" name="grade" value="{{ student.grade }}" onkeypress="preventNonNumericalInput(event)" hidden>
+            <span class="sttext" name="grade">{{ student.grade }}</span>
+        </td>
+        <td class="d-flex flex-row justify-content-center">
+            <button class="btn btn-primary btn-sm me-1" onclick="edit(this, {{ student.id }})">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-success btn-sm me-1" onclick="save(this, {{ student.id }})" hidden>
+                <i class="far fa-save"></i>
+            </button>
+            <form method="DELETE" onsuccess="deleteRow" osargs="{{ student.id }}" confirmDeleteMessage="Are you sure you want to delete {{ student.first_name ~ ' ' ~ student.last_name }}?" enhance>
+                <input name="stid" type="hidden" value="{{ student.id }}">
+                <button class="btn btn-danger btn-sm" type="submit">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </td>
+    </tr>
+{%- endmacro %}

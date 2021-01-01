@@ -29,14 +29,14 @@ def successJSON(*args, **kwargs):
         ret["message"] = args[0]
     return ret
 
-def require_form_keys(keys):
+def require_form_keys(keys, method="POST"):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if request.method != "POST":
+            if request.method != method:
                 return f(*args, **kwargs)
-            formData = [request.form.get(x) for x in keys]
-            if request.method == "POST" and any([not x for x in formData]):
+            formData = [request.form.get(x).strip() for x in keys]
+            if request.method == method and any([not x for x in formData]):
                 return failJSON("Missing arguments")
             return f(*args, **kwargs, formData=formData)
         return decorated_function
@@ -46,6 +46,6 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if "id" not in session:
-            return redirect(url_for('login', continueURL=request.url))
+            return redirect(url_for('main.login', continueURL=request.url))
         return f(*args, **kwargs)
     return decorated_function

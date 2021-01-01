@@ -1,0 +1,49 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Login {% endblock %}
+
+{% block main %}
+    <style>
+        .logincard {
+            min-height: 300px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin-top: 15px;
+            margin-bottom: 100px;
+        }
+        label {
+            font-size: .9em;
+            font-weight: 600;
+        }
+        .loginbtn, .loginbtn:hover {
+            min-width: 250px;
+            width: 60%;
+            background-image: linear-gradient(to top left, rgb(0, 192, 80), rgb(94, 236, 255));
+            color: black;
+            border: none;
+            box-shadow: black 1px 1px 3px 0px;
+        }
+        .loginbtn:hover {
+            box-shadow: rgb(0, 157, 255) 0px 0px 0px 3px;
+            color: rgb(70, 70, 70);
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="max-width: 500px; min-width: fit-content;">
+            <div class="rounded logincard p-4 d-flex flex-column">
+                <h3 class="specialunderline">Login</h3>
+                <form method="POST" class="h-100 p-2 d-flex flex-column" enhance>
+                    <div>
+                        <label for="username" class="form-label">Username (Email) </label>
+                        <input name="username" id="username" type="text" class="form-control" placeholder="Username" required>
+                        <label for="password" class="form-label mt-3">Password </label>
+                        <input name="password" id="password" type="password" class="form-control" placeholder="Password" required>
+                    </div>
+                    <div class="flex-grow-1 text-center pt-4">
+                        <button class="mt-auto btn btn-success btn-lg fw-bold loginbtn" type="submit">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

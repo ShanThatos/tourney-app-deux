@@ -1,0 +1,120 @@
+{% from "main/macros/studentMacros.html" import student_row %}
+{% extends "main/layout.html" %}
+
+{% block title %} Students {% endblock %}
+
+{% block main %}
+    <style>
+        .addStudentsCard {
+            max-width: 700px;
+            min-height: 60px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            border-radius: 5px;
+            margin: 25px auto 10px auto;
+        }
+        label {
+            font-size: .8em;
+            font-weight: 700;
+        }
+        .table-xs>:not(caption)>*>* {
+            padding: .1rem;
+        }
+        .stedit {
+            display: inline;
+            width: auto;
+        }
+    </style>
+    <script>
+        function preventNonNumericalInput(e) {
+            e = e || window.event;
+            var charCode = (typeof e.which == "undefined") ? e.keyCode : e.which;
+            var charStr = String.fromCharCode(charCode);
+            if (!charStr.match(/^[0-9]+$/))
+                e.preventDefault();
+        }
+        function deleteRow(res, id) {
+            $("tr[stid=" + id + "]").remove();
+            updateNoStudentsMessage();
+        }
+        function addRow(res) {
+            $("tbody").append(res.html); 
+            enhanceForms();
+            updateNoStudentsMessage();
+        }
+        function edit(el, id) {
+            $(el).attr("hidden", true);
+            $(el).next().attr("hidden", false);
+            $("tr[stid=" + id + "]").find(".sttext").attr("hidden", true);
+            $("tr[stid=" + id + "]").find("input.stedit").attr("hidden", false);
+        }
+        function save(el, id) {
+            let row = $("tr[stid=" + id + "]");
+            let data = {
+                id: id,
+                first_name: row.find(".stedit[name=first_name]").val().trim(), 
+                last_name: row.find(".stedit[name=last_name]").val().trim(), 
+                grade: row.find(".stedit[name=grade]").val().trim()
+            };
+            sendAjax(window.location.href, "POST", data, null, null, () => {
+                $(row).find(".sttext[name=first_name").html(data.first_name);
+                $(row).find(".sttext[name=last_name").html(data.last_name);
+                $(row).find(".sttext[name=grade").html(data.grade);
+                $(el).attr("hidden", true);
+                $(el).prev().attr("hidden", false);
+                row.find(".sttext").attr("hidden", false);
+                row.find("input.stedit").attr("hidden", true);
+            });
+        }
+        function updateNoStudentsMessage() {
+            $("#nostudents").attr("hidden", $("tbody tr").length != 0);
+            $("#yesstudents").attr("hidden", $("tbody tr").length == 0);
+        }
+        $(document).ready(updateNoStudentsMessage);
+    </script>
+    <div class="fullspace text-center pt-4">
+        <h1>Your Students</h1>
+        <div class="container-md">
+            <div class="addStudentsCard container">
+                <form method="PUT" class="row row-cols-3 g-2 py-2" onsuccess="addRow" enhance>
+                    <div class="col-md-3 col-12">
+                        <h5 class="m-0">Add Students</h5>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <!-- <label for="first_name">First Name</label> -->
+                        <input name="first_name" id="first_name" type="text" class="form-control form-control-sm" placeholder="First Name" required>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <!-- <label for="last_name">Last Name</label> -->
+                        <input name="last_name" id="last_name" type="text" class="form-control form-control-sm" placeholder="Last Name" required>
+                    </div>
+                    <div class="col-md-2 col-4">
+                        <!-- <label for="grade">Grade</label> -->
+                        <input name="grade" id="grade" type="number" class="form-control form-control-sm" placeholder="Grade" onkeypress="preventNonNumericalInput(event)" min="3" max="8" required>
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <button class="btn btn-success btn-sm mx-auto" type="submit" style="min-width: 60px; width: 60%; font-weight: 700;">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="container-md mt-3" style="max-width: 800px;">
+            <table class="table table-light table-bordered table-striped table-hover table-xs w-100 css-serial border border-dark border-3">
+                <thead class="border-bottom border-dark border-3">
+                    <th style="width: 50px;">#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Grade</th>
+                    <th>Options</th>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        {{ student_row(student) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4 id="nostudents" hidden>Looks like you haven't added any students to your team <br>Fill out the form above to create your team</h4>
+            <h4 id="yesstudents" hidden>Head on over to the Tournaments page to register for events</h4>
+        </div>
+    </div>
+{% endblock %}
