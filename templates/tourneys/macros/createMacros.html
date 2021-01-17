@@ -1,0 +1,346 @@
+{% macro general_tab() -%}
+    <h5 class="text-center my-1">General Info</h5>
+    {% if not tourney %}
+        <div class="row mb-1">
+            <div class="col-3">
+                <span class="align-middle">Owner:</span>
+            </div>
+            <div class="col-9">
+                <select name="coach_id" class="form-control select2" required>
+                    {% for coach in coaches %}
+                        <option value="{{ coach.id }}">
+                            {{ coach.id }} -- {{ coach.name }} -- {{ coach.email }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Name:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[name]" type="text" class="form-control" placeholder="Tournament Name" value="{{ tourney.info.name if tourney else '' }}" required>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Date:</span>
+        </div>
+        <div class="col-9">
+            <input name="date" type="date" class="form-control" value="{{ tourney.date if tourney else '' }}" required>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle lh-1" style="font-size: .8em; line-height: .8em;">Registration Close:</span>
+        </div>
+        <div class="col-9">
+            <input name="close_date" type="datetime-local" class="form-control" value="{{ tourney.close_date.strftime('%Y-%m-%dT%H:%M:%S') if tourney else '' }}" required>
+        </div>
+    </div>
+    <div class="my-2 ps-3 d-flex">
+        <input class="form-check-input" type="checkbox" name="info[allow_late]" {% if tourney and tourney.info.allow_late %}checked{% endif %}>
+        <span class="ms-2">Allow Late Registrations Until Tournament Date Noon</span>
+    </div>
+    <div class="row mt-2 mb-1">
+        <div class="col-3">
+            <span class="align-middle">Grade Levels:</span>
+        </div>
+        <div class="col-9">
+            <input name="min_grade" type="number" min="1" max="8" class="form-control form-control-sm d-inline-block" style="width: 60px;" value="{{ tourney.min_grade if tourney else 3 }}" required>
+            -
+            <input name="max_grade" type="number" min="1" max="8" class="form-control form-control-sm d-inline-block" style="width: 60px;" value="{{ tourney.max_grade if tourney else 8 }}" required>
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Regular Price:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[price]" type="number" class="form-control form-control-sm" style="width: 60px;" value="{{ tourney.info.price if tourney else 5 }}" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-3">
+            <span class="align-middle">Late Price:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[lateprice]" type="number" class="form-control form-control-sm d-inline-block" style="width: 60px;" value="{{ tourney.info.lateprice if tourney else '' }}">
+            <span class="align-middle">-- Required For Late Registrations</span>
+        </div>
+    </div>
+    <div class="my-2">
+        <span>Description:</span>
+        <textarea name="info[description]" form="createForm" class="form-control form-control-sm" rows="4" placeholder="Description" value="{{ tourney.info.description if tourney else '' }}"></textarea>
+    </div>
+{%- endmacro %}
+
+{% macro in_person_tab() -%}
+    <h5 class="text-center my-1">In Person</h5>
+    {% if not tourney %}
+        <div class="my-2 ps-3 d-flex">
+            <input class="form-check-input" type="radio" name="info[type]" value="inperson">
+            <span class="ms-2">In Person Tournament</span>
+        </div>
+    {% endif %}
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Address/Location:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[location]" type="text" class="form-control" placeholder="Address/Location" value="{{ tourney.info.location if tourney else '' }}">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Details Link:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[details_link]" type="text" class="form-control" placeholder="Details Link" value="{{ tourney.info.details_link if tourney else '' }}">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Schedule Link:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[schedule_link]" type="text" class="form-control" placeholder="Schedule Link" value="{{ tourney.info.schedule_link if tourney else '' }}">
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro virtual_tab() -%}
+    <h5 class="text-center my-1">Virtual</h5>
+    {% if not tourney %}
+        <div class="my-2 ps-3 d-flex">
+            <input class="form-check-input" type="radio" name="info[type]" value="virtual">
+            <span class="ms-2">Virtual Tournament</span>
+        </div>
+    {% else %}
+        <input type="hidden" name="info[type]" value="virtual">
+    {% endif %}
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Tests Link:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[tests_link]" type="text" class="form-control" placeholder="Tests Link" value="{{ tourney.info.tests_link if tourney else '' }}">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Training Link:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[training_session_link]" type="text" class="form-control" placeholder="Training Session Link" value="{{ tourney.info.training_session_link if tourney else '' }}">
+        </div>
+    </div>
+    <div class="my-2 ps-3 d-flex">
+        <input class="form-check-input" type="checkbox" name="info[upload_scores]" {% if tourney and tourney.info.upload_scores %}checked{% endif %}>
+        <span class="ms-2">Allow Coaches to Enter Students' Scores</span>
+    </div>
+{%- endmacro %}
+
+{% macro collab_row(coach, tourney) -%}
+    <tr rid="{{ coach.id }}">
+        <td>{{ coach.name }}</td>
+        <td>{{ coach.email }}</td>
+        <td>Collaborator</td>
+        <td>
+            <button class="btn btn-danger btn-sm"
+                url="/tournaments/{{ tourney.id }}/collaborators"
+                method="DELETE"
+                data='{"coach_id": {{ coach.id }}}'
+                onsuccess="deleteRow"
+                osargs="#collabs-tbody"
+                enhance
+            >
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+{%- endmacro %}
+
+{% macro collabs_tab() -%}
+    <h5 class="text-center my-1">Collaborators</h5>
+    <div class="row mb-1">
+        <div class="col-8">
+            <select form="tcollab-put" class="select2 form-control" name="coach_id">
+                {% for coach in coaches %}
+                    <option value="{{ coach.id }}">{{ coach.name }} - {{ coach.email }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-4">
+            <button form="tcollab-put" class="btn btn-success btn-sm" type="submit">Add Collaborator</button>
+        </div>
+    </div>
+    <div class="row mb-2" style="overflow-y: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>-</th>
+                </tr>
+            </thead>
+            <tbody id="collabs-tbody" style="font-weight: 600;">
+                <tr>
+                    <td>{{ tourney.owner.name }}</td>
+                    <td>{{ tourney.owner.email }}</td>
+                    <td>Administrator</td>
+                    <td></td>
+                </tr>
+                {% for coach in tourney.collaborators.all() %}
+                    {{ collab_row(coach, tourney) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%- endmacro %}
+
+{% macro data_entry_row(account) -%}
+    <tr rid="{{ account.id }}">
+        <td>{{ account.username }}</td>
+        <td>{{ account.password }}</td>
+        <td>
+            <a href="/tournaments/{{ account.tourney_id }}/dataentry?id={{ account.id }}" class="btn btn-primary btn-sm">Login</a>
+            <button class="btn btn-danger btn-sm"
+                url="/tournaments/{{ account.tourney_id }}/dataentry"
+                method="DELETE"
+                data='{"id": {{ account.id }}}'
+                onsuccess="deleteRow"
+                osargs="#dataentry-tbody"
+                enhance
+            >
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    </tr>
+{%- endmacro %}
+
+{% macro data_entry_tab() -%}
+    <h5 class="text-center my-1">Data Entry</h5>
+    <div class="row mb-1 ps-4">
+        <div class="col-6">
+            <input form="tde-put" name="username" type="text" class="form-control form-control-sm" placeholder="Username">
+        </div>
+        <div class="col-6">
+            <button form="tde-put" class="btn btn-success btn-sm" type="submit">Add Account</button>
+        </div>
+    </div>
+    <div class="row mb-2" style="overflow-y: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>-</th>
+                </tr>
+            </thead>
+            <tbody id="dataentry-tbody" style="font-weight: 600;">
+                {% for account in tourney.data_entry_accounts.all() %}
+                    {{ data_entry_row(account) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%- endmacro %}
+
+{% macro invoice_tab() -%}
+    <h5 class="text-center my-1">Invoice</h5>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Organization:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[invoice][name]" type="text" class="form-control" placeholder="Organization Name" value="{{ tourney.info.invoice.name if tourney and tourney.info.invoice else '' }}">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Street Address:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[invoice][street]" type="text" class="form-control" placeholder="Street Address" value="{{ tourney.info.invoice.street if tourney and tourney.info.invoice else '' }}">
+        </div>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">City & Zip Code:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[invoice][cityzip]" type="text" class="form-control" placeholder="City & Zip Code" value="{{ tourney.info.invoice.cityzip if tourney and tourney.info.invoice else '' }}">
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro state_qualifier_tab() -%}
+    <h5 class="text-center my-1">State Qualifier</h5>
+    {% if not tourney %}
+        <div class="my-2 ps-3 d-flex">
+            <input class="form-check-input" type="checkbox" name="info[state_qual]">
+            <span class="ms-2">Is This A State Qualifier?</span>
+        </div>
+    {% endif %}
+    {% for grade in (6, 7, 8) %}
+        <h6>{{ grade }}th Grade:</h6>
+        <div class="row mb-1">
+            {% for test_name in (('NS', 'Number Sense'), ('CA', 'Calculator Applications'), ('GM', 'General Math'), ('GS', 'General Science')) %}
+                <div class="col-3">
+                    <div style="font-size: .7em;">{{ test_name[1] }}</div>
+                    <input name="info[qual_scores][{{ grade }}][{{ test_name[0] }}]" type="number" class="form-control form-control-sm" placeholder="{{ test_name[1] }} Qualifying Score" value="0">
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro results_tab() -%}
+    <h5 class="text-center my-1">Results</h5>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Results Open:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[results_open]" type="datetime-local" class="form-control" value="{{ tourney.info.results_open if tourney else '' }}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][individual]" {% if not tourney or tourney.info.results and tourney.info.results.individual %}checked{% endif %}>
+                <span class="ms-2">Individual Grade Results</span>
+            </div>
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][eventsweepstakes]" {% if not tourney or tourney.info.results and tourney.info.results.eventsweepstakes %}checked{% endif %}>
+                <span class="ms-2">Event Sweepstakes</span>
+            </div>
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][overallsweepstakes]" {% if not tourney or tourney.info.results and tourney.info.results.overallsweepstakes %}checked{% endif %}>
+                <span class="ms-2">Overall Sweepstakes</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][schoollevel]" {% if not tourney or tourney.info.results and tourney.info.results.schoollevel %}checked{% endif %}>
+                <span class="ms-2">Individual E/M Results</span>
+            </div>
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][topgungrades]" {% if not tourney or tourney.info.results and tourney.info.results.topgungrades %}checked{% endif %}>
+                <span class="ms-2">Top Gun Grade Levels</span>
+            </div>
+            <div class="my-2 ps-3 d-flex">
+                <input class="form-check-input" type="checkbox" name="info[results][topgunem]" {% if not tourney or tourney.info.results and tourney.info.results.topgunem %}checked{% endif %}>
+                <span class="ms-2">Top Gun E/M</span>
+            </div>
+        </div>
+    </div>
+    <div class="my-2">
+        <span>Custom Results:</span>
+        <textarea name="info[results][custom]" form="createForm" class="form-control form-control-sm" rows="1" value="{{ tourney.info.results.custom if tourney and tourney.info.results else '' }}"></textarea>
+    </div>
+{%- endmacro %}

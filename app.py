@@ -1,12 +1,19 @@
 import os
+import extensions
+
 from flask import Flask, request, redirect, session, render_template
 from flask_session import Session
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 
-from extensions import db
+from extensions import *
 from models import *
+
 from routes.main import main as mainRoutes
+from routes.tournaments.main import main as tourneyMainRoutes
+from routes.tournaments.owner import main as tourneyOwnerRoutes
+from routes.admin import main as adminRoutes
+
 
 load_dotenv()
 app = Flask(__name__)
@@ -16,24 +23,21 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 app.config["CACHE_STATIC_FILES"] = False
 
-app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
-
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 db.init_app(app)
 
-migrate = Migrate(app, db)
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
+Migrate(app, db)
 
 @app.before_request
 def before_request():
-    if "id" in session:
-        session["admin"] = Coach.query.get(session["id"]).admin
     if not request.is_secure and app.env != "development":
-        url = request.url.replace("http://", "https://", 1)
-        code = 301
-        return redirect(url, code=code)
+        return redirect(request.url.replace("http://", "https://", 1), code=301)
 
 @app.after_request
 def after_request(response):
@@ -46,9 +50,12 @@ def after_request(response):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("/main/404.html"), 404
+    return render_template("/main/404.html")
 
-app.register_blueprint(mainRoutes)
+for route in [mainRoutes, adminRoutes, tourneyOwnerRoutes, tourneyMainRoutes]:
+    app.register_blueprint(route)
+
+app.add_template_global(extensions, name="ext")
 
 if __name__ == "__main__":
     app.env = "development"

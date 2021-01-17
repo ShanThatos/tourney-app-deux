@@ -57,9 +57,9 @@
                 grade: row.find(".stedit[name=grade]").val().trim()
             };
             sendAjax(window.location.href, "POST", data, null, null, () => {
-                $(row).find(".sttext[name=first_name").html(data.first_name);
-                $(row).find(".sttext[name=last_name").html(data.last_name);
-                $(row).find(".sttext[name=grade").html(data.grade);
+                $(row).find(".sttext[name=first_name]").html(data.first_name);
+                $(row).find(".sttext[name=last_name]").html(data.last_name);
+                $(row).find(".sttext[name=grade]").html(data.grade);
                 $(el).attr("hidden", true);
                 $(el).prev().attr("hidden", false);
                 row.find(".sttext").attr("hidden", false);

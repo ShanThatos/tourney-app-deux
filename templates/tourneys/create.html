@@ -1,0 +1,82 @@
+{% import "tourneys/macros/createMacros.html" as macs with context %}
+{% extends "main/layout.html" %}
+
+{% block title %} Create {% endblock %}
+
+{% block main %}
+    <style>
+        .createcard {
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin-top: 15px;
+            margin-bottom: 100px;
+            font-weight: 700;
+            max-width: 850px;
+        }
+        .tab-content {
+            display: flex;
+        }
+        .tab-content > .tab-pane {
+            display: block;
+            visibility: hidden;
+            margin-right: -100%;
+            width: 100%;
+        }
+        .tab-content > .active {
+            visibility: visible;
+        }
+        .nav-pills > .nav-link {
+            margin-bottom: 3px;
+        }
+        .hl:not(active):hover {
+            background-color: lightskyblue;
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="rounded createcard mx-auto p-4 d-flex flex-column">
+            <h3 class="specialunderline">Create Tournament</h3>
+            <h6 class="mb-4 text-center">Only Use This Page In A Chrome Browser</h6>
+            <form id="createForm" method="POST" enhance>
+                <div class="d-flex align-items-start">
+                    <div class="nav d-flex flex-column nav-pills me-2 pe-2 text-end" style="font-size: .7em;">
+                        <a class="nav-link active hl" data-bs-toggle="pill" href="#general-content">General</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#results-content">Results</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#state-qualifier-content"><small>State Qualifier</small></a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#invoice-content">Invoice Info</a>
+                        <div class="nav-link mt-5 me-1" style="transition: none;">
+                            <u class="me-2">Type</u>
+                            <div style="font-size: .7em;">
+                                Only Choose One
+                            </div>
+                        </div>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#in-person-content">In Person</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#virtual-content">Virtual</a>
+                        <button class="mt-5 btn btn-success" type="submit">Submit</button>
+                    </div>
+                    <div class="flex-grow-1 border-start border-dark border-3 ps-3" style="max-width: 650px;">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="general-content">
+                                {{ macs.general_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="results-content">
+                                {{ macs.results_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="invoice-content">
+                                {{ macs.invoice_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="in-person-content">
+                                {{ macs.in_person_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="virtual-content">
+                                {{ macs.virtual_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="state-qualifier-content">
+                                {{ macs.state_qualifier_tab() }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

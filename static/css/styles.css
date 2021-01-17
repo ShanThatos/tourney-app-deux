@@ -1,8 +1,11 @@
 body {
     font-family: 'Titillium Web', sans-serif;
-    font-size: 2.5vh;
+    font-size: 18px;
+    min-width: max(100%, 480px);
+    width: fit-content;
     min-height: 100vh;
-    background-image: linear-gradient(to right, rgb(159, 184, 234), rgb(220, 231, 253));
+    background-image: linear-gradient(to right, rgb(169, 194, 248), white, white, white);
+    background-size: 350vw 100vh;
     display: flex;
     flex-direction: column;
 }
@@ -69,6 +72,12 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(0, 110, 255, .3);
 }
 
+@media all and (min-width: 992px) {
+	.navbar .nav-item .dropdown-menu{ display: none; }
+	.navbar .nav-item:hover .dropdown-menu{ display: block; }
+	.navbar .nav-item .dropdown-menu{ margin-top:0; }
+}
+
 @keyframes slidefromright {
     from {
         transform: translateX(100vw);
@@ -94,4 +103,10 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 3px solid rgb(131, 0, 65);
     border-radius: 5px;
     text-align: center;
+}
+
+.flex-break-row {
+    flex-basis: 100%;
+    height: 0;
+    margin: 0;
 }

@@ -1,0 +1,104 @@
+{% import "tourneys/macros/createMacros.html" as macs with context %}
+{% extends "main/layout.html" %}
+
+{% block title %} Edit {% endblock %}
+
+{% block main %}
+    <style>
+        .editcard {
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin: 15px 20px 100px 20px;
+            font-weight: 700;
+            max-width: 850px;
+        }
+        .tab-content {
+            display: flex;
+        }
+        .tab-content > .tab-pane {
+            display: block;
+            visibility: hidden;
+            margin-right: -100%;
+            width: 100%;
+        }
+        .tab-content > .active {
+            visibility: visible;
+        }
+        .nav-pills > .nav-link {
+            margin-bottom: 3px;
+        }
+        .hl:not(active):hover {
+            background-color: lightskyblue;
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="rounded editcard p-4 d-flex flex-column">
+            <h3 class="specialunderline">Edit Tournament</h3>
+            <h6 class="mb-4 text-center">Only Use This Page In A Chrome Browser</h6>
+            <form id="createForm" method="POST" keepinputs="true" enhance>
+                <div class="d-flex align-items-start">
+                    <div class="nav d-flex flex-column nav-pills me-2 pe-2 text-end" style="font-size: .7em;">
+                        <a class="nav-link active hl" data-bs-toggle="pill" href="#general-content">General</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#results-content">Results</a>
+                        {% if tourney.info.type == 'inperson' %}
+                            <a class="nav-link hl" data-bs-toggle="pill" href="#in-person-content">In Person</a>
+                        {% elif tourney.info.type == 'virtual' %}
+                            <a class="nav-link hl" data-bs-toggle="pill" href="#virtual-content">Virtual</a>
+                        {% endif %}
+                        {% if tourney.info.state_qual %}
+                            <a class="nav-link hl" data-bs-toggle="pill" href="#state-qualifier-content"><small>State Qualifier</small></a>
+                        {% endif %}
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#invoice-content">Invoice Info</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#data-entry-content">Data Entry</a>
+                        <a class="nav-link hl" data-bs-toggle="pill" href="#collabs-content">Collaborators</a>
+                        <button class="mt-5 btn btn-success" type="submit">Submit</button>
+                    </div>
+                    <div class="flex-grow-1 border-start border-dark border-3 ps-3" style="max-width: 650px;">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="general-content">
+                                {{ macs.general_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="invoice-content">
+                                {{ macs.invoice_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="data-entry-content">
+                                {{ macs.data_entry_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="collabs-content">
+                                {{ macs.collabs_tab() }}
+                            </div>
+                            <div class="tab-pane fade" id="results-content">
+                                {{ macs.results_tab() }}
+                            </div>
+                            {% if tourney.info.type == 'inperson' %}
+                                <div class="tab-pane fade" id="in-person-content">
+                                    {{ macs.in_person_tab() }}
+                                </div>
+                            {% elif tourney.info.type == 'virtual' %}
+                                <div class="tab-pane fade" id="virtual-content">
+                                    {{ macs.virtual_tab() }}
+                                </div>
+                            {% endif %}
+                            {% if tourney.info.state_qual %}
+                                <div class="tab-pane fade" id="state-qualifier-content">
+                                    {{ macs.state_qualifier_tab() }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <script>
+                function addRow(res, tbody) {
+                    $(tbody).append(res.html);
+                    enhanceButtons();
+                }
+                function deleteRow(res, tbody) {
+                    $(tbody).find("tr[rid=" + res.id + "]").remove();
+                }
+            </script>
+            <form id="tcollab-put" action="/tournaments/{{ tourney.id }}/collaborators" method="PUT" onsuccess="addRow" osargs="#collabs-tbody" enhance></form>
+            <form id="tde-put" action="/tournaments/{{ tourney.id }}/dataentry" method="PUT" onsuccess="addRow" osargs="#dataentry-tbody" enhance></form>
+        </div>
+    </section>
+{% endblock %}

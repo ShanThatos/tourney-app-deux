@@ -1,0 +1,79 @@
+{% macro students_table(students) %}
+    <table class="table table-sm bg-white" style="font-size: .9em;">
+        <thead>
+            <tr>
+                <th class="th-stick-top">ID</th>
+                <th class="th-stick-top">Name</th>
+                <th class="th-stick-top">School</th>
+                <th class="th-stick-top">Grade</th>
+            </tr>
+        </thead>
+        <tbody class="list">
+            {% for student in students %}
+                {% if not student.school_id %}
+                    <tr stid="{{ student.id }}">
+                        <td class="id">{{ student.id }}</td>
+                        <td class="name">{{ student.first_name ~ ' ' ~ student.last_name }}</td>
+                        <td class="school">{{ student.coach.school_name }}</td>
+                        <td class="grade">{{ student.grade }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro schools_select(schools) %}
+    <select id="schoolselect" class="form-control select2 w-75">
+        {% for school in schools %}
+            <option value="{{ school.id }}">{{ school.name }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+
+{% macro school_card(school) %}
+    <div class="peachcard rounded mb-2 p-1" shid="{{ school.id }}">
+        <button class="btn shadow-none" data-bs-toggle="collapse" data-bs-target="#collapse{{ school.id }}">
+            <h6 class="m-0">
+                <u>{{ school.name }} - {{ school.students.count() }}</u>
+            </h6>
+        </button>
+        <form class="d-inline float-end" method="DELETE" onsuccess="deleteSchool" osargs="{{ school.id }}" enhance>
+            <input type="hidden" name="school_id" value="{{ school.id }}">
+            <button class="btn btn-danger btn-sm" type="submit">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+        <div class="collapse" id="collapse{{ school.id }}">
+            <div class="p-2">
+                <table class="table table-sm bg-white fs-6 mb-0"> 
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Grade</th>
+                            <th>-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in school.students %}
+                            <tr sgstid="{{ student.id }}">
+                                <td>{{ student.id }}</td>
+                                <td>{{ student.first_name ~ ' ' ~ student.last_name }}</td>
+                                <td>{{ student.grade }}</td>
+                                <td>
+                                    <form method="PATCH" onsuccess="deleteRow" osargs="{{ student.id }}" enhance>
+                                        <input type="hidden" name="student_id" value="{{ student.id }}">
+                                        <button class="btn btn-danger btn-sm" type="submit">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

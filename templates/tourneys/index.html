@@ -1,0 +1,54 @@
+{% from "tourneys/macros/indexMacros.html" import tourney_card%}
+{% extends "main/layout.html" %}
+
+{% block title %} Tournaments {% endblock %}
+
+{% block main %}
+    <style>
+        .tourneycard {
+            box-shadow: black 0px 0px 5px 1px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .tc-head {
+            padding: 8px;
+            background-image: linear-gradient(to bottom right, rgb(255, 233, 246), rgb(255, 223, 226));
+            border-bottom: solid darkgray 2px;
+            font-weight: 600;
+        }
+        .tc-content {
+            padding: 10px;
+            background-color: white;
+            border-bottom: solid darkgray 2px;
+        }
+        .tc-options {
+            padding: 5px;
+            background-color: rgb(217, 255, 231);
+        }
+        .tc-description {
+            font-size: .9em;
+            overflow: hidden;
+            max-height: 1.1rem;
+            margin: 0;
+            transition: max-height 0.7s ease;
+        }
+        .tc-content:hover .tc-description {
+            max-height: 300px;
+        }
+    </style>
+    <section class="fullspace p-4">
+        <div class="container-md" style="max-width: 1000px;">
+            {% for month in data %}
+                <h2>{{ month["month"] ~ ' ' ~ month["year"]|int }}</h2>
+                <hr class="my-2">
+                {% for tourney3 in ext.groupsof(3, month["tourneys"]) %}
+                    <div class="row">
+                        {% for tourney in tourney3 %}
+                            {{ tourney_card(tourney) }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

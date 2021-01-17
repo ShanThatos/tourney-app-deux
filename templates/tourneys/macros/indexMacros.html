@@ -1,0 +1,33 @@
+{% macro tourney_card(tourney) %}
+    <div class="col-lg-4 my-2">
+        <div class="tourneycard">
+            <div class="tc-head text-center">
+                {{ tourney["info"]["name"]|safe }}
+            </div>
+            <div class="tc-content" style="font-size: .9em;">
+                <b>Date: </b>{{ ext.formatDateTime(tourney["date"], "%A, %b %d, %Y") }} <br>
+                <b>Registration Close: </b>{{ ext.formatDateTime(tourney["close_date"], "%b %d, %I:%M %p") }} <br>
+                <b>Grade Levels: </b>{{ ext.ordinal(tourney["min_grade"]) }} - {{ ext.ordinal(tourney["max_grade"]) }} <br>
+                <b>Price: </b>${{ tourney["info"]["price"] }} per test <br>
+                {% if tourney["info"]["description"] %}
+                    <b style="color: rgb(0, 0, 200);"><u>Description: </u></b> <br>
+                    <p class="tc-description">{{ tourney["info"]["description"]|safe }}</p>
+                {% endif %}
+            </div>
+            <div class="tc-options d-flex justify-content-center align-items-center flex-wrap">
+                {% if ext.current_time() <= ext.getDateTime(tourney["close_date"]) %}
+                    <a href="" class="btn btn-sm btn-primary m-1">Register</a>
+                {% endif %}
+                <a href="" class="btn btn-sm btn-primary m-1">Details</a>
+                <a href="" class="btn btn-sm btn-primary m-1">Schedule</a>
+                <a href="" class="btn btn-sm btn-primary m-1">Results</a>
+                {% if ext.has_tourney_access(tourney["id"]) %}
+                    <div class="flex-break-row"></div>
+                    <a href="/tournaments/{{ tourney['id'] }}/edit" class="btn btn-sm btn-success m-1">Edit</a>
+                    <a href="" class="btn btn-sm btn-success m-1"><small>Attending Schools</small></a>
+                    <a href="" class="btn btn-sm btn-success m-1">Scores</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}

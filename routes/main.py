@@ -40,8 +40,16 @@ def login(formData=None):
     session.clear()
     if request.method == "GET":
         return render_template("/main/login.html")
-    coach = Coach.query.filter(func.lower(Coach.email) == formData[0].lower()).first()
-    if not coach or not check_password_hash(coach.password, formData[1]):
+    formData[0] = formData[0].lower()
+    coach = Coach.query.filter(func.lower(Coach.email) == formData[0]).first()
+    if not coach: 
+        account = DataEntry.query.filter(func.lower(DataEntry.username) == formData[0]).first()
+        if not account or account.password != formData[1]:
+            return failJSON("Invalid Username/Password")
+        session["dataentry_id"] = account.id
+        session["tourney_id"] = account.tourney_id
+        return redirect("/dataentry/scores")
+    if not check_password_hash(coach.password, formData[1]):
         return failJSON("Invalid Username/Password")
     session["id"] = coach.id
     session["admin"] = coach.admin
@@ -62,7 +70,7 @@ student_row = jinja2.Template(open("templates/main/macros/studentMacros.html").r
 @require_form_keys("id first_name last_name grade".split(" "))
 def students(formData=None):
     if request.method == "GET":
-        students = sorted(Coach.query.get(session["id"]).students, key=lambda n: (n.grade, n.first_name, n.last_name))
+        students = Coach.query.get(session["id"]).students.order_by(Student.grade.asc(), Student.first_name.asc(), Student.last_name.asc()).all()
         return render_template("/main/students.html", students=students)
     elif request.method == "PUT":
         if not formData[2].isnumeric(): return failJSON("Invalid Grade, requires only numbers")

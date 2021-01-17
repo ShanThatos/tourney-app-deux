@@ -1,5 +1,6 @@
-from extensions import db
-from sqlalchemy import Column, Integer, Text, Boolean, Date, JSON, ForeignKey, Table, UniqueConstraint
+from extensions import db, random_password
+from sqlalchemy import Column, Integer, Text, Boolean, Date, ForeignKey, Table, UniqueConstraint, TIMESTAMP
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship, backref
 
 class Coach(db.Model):
@@ -11,9 +12,10 @@ class Coach(db.Model):
     password = Column(Text, nullable=False)
     admin = Column(Boolean, default=False, nullable=False)
     school_name = Column(Text, nullable=False)
-    students = relationship("Student", backref="coach")
-    owned_tourneys = relationship("Tourney", backref="coach")
-    attending_tourneys = relationship("Tourney", secondary="tourneycoach")
+    students = relationship("Student", backref="coach", lazy="dynamic")
+    owned_tourneys = relationship("Tourney", backref="owner", lazy="dynamic")
+    collabs_tourneys = relationship("Tourney", secondary="tourneycollabs", lazy="dynamic")
+    attending_tourneys = relationship("Tourney", secondary="tourneycoach", lazy="dynamic")
 
     def __init__(self, args):
         self.name = args[0]
@@ -30,7 +32,8 @@ class Student(db.Model):
     last_name = Column(Text, nullable=False)
     grade = Column(Integer, nullable=False)
     coach_id = Column(Integer, ForeignKey("coaches.id"), nullable=False)
-    tourneys = relationship("Tourney", secondary="tourneystudent")
+    school_id = Column(Integer, ForeignKey("schools.id"))
+    tourneys = relationship("Tourney", secondary="tourneystudent", lazy="dynamic")
 
     def __init__(self, args):
         self.first_name = args[0]
@@ -42,13 +45,26 @@ class Tourney(db.Model):
     __tablename__ = "tourneys"
     id = Column(Integer, primary_key=True)
     date = Column(Date, nullable=False)
-    close_date = Column(Date)
+    close_date = Column(TIMESTAMP, nullable=False)
+    results_date = Column(TIMESTAMP)
     min_grade = Column(Integer, nullable=False)
     max_grade = Column(Integer, nullable=False)
     info = Column(JSON, nullable=False)
     coach_id = Column(Integer, ForeignKey("coaches.id"), nullable=False)
-    coaches = relationship("Coach", secondary="tourneycoach")
-    students = relationship("Student", secondary="tourneystudent")
+    collaborators = relationship("Coach", secondary="tourneycollabs", lazy="dynamic")
+    coaches = relationship("Coach", secondary="tourneycoach", lazy="dynamic")
+    students = relationship("Student", secondary="tourneystudent", lazy="dynamic")
+    data_entry_accounts = relationship("DataEntry", backref="tourney", lazy="dynamic")
+    def update(self, args):
+        self.date = args["date"]
+        self.close_date = args["close_date"]
+        self.min_grade = args["min_grade"]
+        self.max_grade = args["max_grade"]
+        self.info = args["info"]
+    def __init__(self, args):
+        self.coach_id = args["coach_id"]
+        self.update(args)
+
 
 class TourneyCoach(db.Model):
     __tablename__ = "tourneycoach"
@@ -74,3 +90,30 @@ class TourneyStudent(db.Model):
     student = relationship("Student", backref=backref("tourneystudent", cascade="all, delete-orphan"))
     tourney = relationship("Tourney", backref=backref("tourneystudent", cascade="all, delete-orphan"))
     __table_args__ = (UniqueConstraint("tourney_id", "student_id", name="ts_constraint"),)
+
+class TourneyCollabs(db.Model):
+    __tablename__ = "tourneycollabs"
+    id = Column(Integer, primary_key=True)
+    tourney_id = Column(Integer, ForeignKey("tourneys.id"), nullable=False)
+    coach_id = Column(Integer, ForeignKey("coaches.id"), nullable=False)
+    tourney = relationship("Tourney", backref=backref("tourneycollabs", cascade="all, delete-orphan"))
+    coach = relationship("Coach", backref=backref("tourneycollabs", cascade="all, delete-orphan"))
+    __table_args__ = (UniqueConstraint("tourney_id", "coach_id", name="tcollab_constraint"),)
+
+class DataEntry(db.Model):
+    __tablename__ = "dataentry"
+    id = Column(Integer, primary_key=True)
+    tourney_id = Column(Integer, ForeignKey("tourneys.id"), nullable=False)
+    username = Column(Text, unique=True, nullable=False)
+    password = Column(Text, nullable=False)
+    
+    def __init__(self, username, tourney_id):
+        self.username = username
+        self.tourney_id = tourney_id
+        self.password = random_password(6)
+
+class School(db.Model):
+    __tablename__ = "schools"
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, unique=True, nullable=False)
+    students = relationship("Student", backref="school", lazy="dynamic")

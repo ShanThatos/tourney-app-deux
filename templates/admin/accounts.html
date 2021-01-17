@@ -1,0 +1,54 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Accounts {% endblock %}
+
+{% block main %}
+    <section class="fullspace pt-4">
+        <div class="container-md" style="max-width: 700px;">
+            <table class="table table-light table-striped shadow fs-6 table-bordered border-dark">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>School</th>
+                        <th>Info</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coach in coaches %}
+                        <tr>
+                            <td>{{ coach.id }}</td>
+                            <td>{{ coach.name }}</td>
+                            <td>{{ coach.school_name }}</td>
+                            <td>
+                                <ul>
+                                    <li>Email: {{ coach.email }}</li>
+                                    <li>Phone: {{ coach.phone }}</li>
+                                    <li>Admin: {{ coach.admin }}</li>
+                                    <li>Students: {{ coach.students.count() }}</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <button class="btn btn-info btn-sm"
+                                    method="POST"
+                                    data='{"admin": true, "coach_id": {{ coach.id }}}'
+                                    enhance
+                                >
+                                    Login As Admin
+                                </button>
+                                <button class="btn btn-info btn-sm"
+                                    method="POST"
+                                    data='{"admin": false, "coach_id": {{ coach.id }}}'
+                                    enhance
+                                >
+                                    Login
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock %}
