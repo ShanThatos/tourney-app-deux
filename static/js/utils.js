@@ -30,7 +30,7 @@ function stripeHelp(res) {
         });
     } catch (err) {
         console.log(err);
-        window.location.href = window.location.href;
+        // window.location.href = window.location.href;
     }
 }
 function stripeRedirect(res) {
