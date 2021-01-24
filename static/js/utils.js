@@ -23,7 +23,7 @@ function stripeHelp(res) {
     try {
         Stripe(res.api_key)
         .redirectToCheckout({
-            session_id : res.stripe_session_id
+            sessionId : res.stripe_session_id
         })
         .then((result) => {
             Swal.fire("Error", result.error.message, "error");
