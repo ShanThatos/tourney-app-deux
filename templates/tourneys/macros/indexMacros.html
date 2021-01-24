@@ -16,7 +16,7 @@
             </div>
             <div class="tc-options d-flex justify-content-center align-items-center flex-wrap">
                 {% if ext.current_time() <= ext.getDateTime(tourney["close_date"]) %}
-                    <a href="" class="btn btn-sm btn-primary m-1">Register</a>
+                    <a href="/txmcvirtual/register?{{ tourney['id'] }}=true" class="btn btn-sm btn-primary m-1">Register</a>
                 {% endif %}
                 <a href="" class="btn btn-sm btn-primary m-1">Details</a>
                 <a href="" class="btn btn-sm btn-primary m-1">Schedule</a>

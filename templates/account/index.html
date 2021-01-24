@@ -1,0 +1,65 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Account {% endblock %}
+
+{% block main %}
+    <style>
+        .accountcard {
+            min-height: 300px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin-top: 50px;
+        }
+        label {
+            font-size: .9em;
+            font-weight: 600;
+        }
+    </style>
+    <section class="d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="max-width: 720px; min-width: fit-content;">
+            <div class="rounded accountcard p-4 d-flex flex-column">
+                <h3 class="specialunderline">Account</h3>
+                <form class="h-100 p-2 d-flex flex-column" keepinputs="true" enhance>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Name: </label>
+                            <input name="name" type="text" class="form-control" placeholder="Name" value="{{ coach.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address (Username): </label>
+                            <input name="email" type="email" class="form-control" placeholder="Email" value="{{ coach.email }}" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number: </label>
+                            <input name="phone" type="text" class="form-control" placeholder="Phone Number" value="{{ coach.phone }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">School: </label>
+                            <input name="school_name" type="text" class="form-control" placeholder="School" value="{{ coach.school_name }}" required>
+                        </div>
+                    </div>
+                    <div class="row flex-grow-1 px-3 mt-2">
+                        <div class="col-4 mt-auto text-center">
+                            <button class="btn btn-success w-100" type="submit">Save Changes</button>
+                        </div>
+                        <div class="col-4 mt-auto text-center">
+                            <a class="btn btn-primary w-100" href="/account/changepassword">Change Password</a>
+                        </div>
+                        <div class="col-4 mt-auto text-center">
+                            <button 
+                                class="btn btn-danger w-100"
+                                method="DELETE"
+                                confirmDeleteMessage="Are you sure you want to delete your account? All data related to this account including results and scores will be lost."
+                                enhance
+                            >
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

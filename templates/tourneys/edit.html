@@ -42,8 +42,8 @@
                         <a class="nav-link hl" data-bs-toggle="pill" href="#results-content">Results</a>
                         {% if tourney.info.type == 'inperson' %}
                             <a class="nav-link hl" data-bs-toggle="pill" href="#in-person-content">In Person</a>
-                        {% elif tourney.info.type == 'virtual' %}
-                            <a class="nav-link hl" data-bs-toggle="pill" href="#virtual-content">Virtual</a>
+                        {% elif tourney.info.type == 'txmcvirtual' %}
+                            <a class="nav-link hl" data-bs-toggle="pill" href="#txmc-virtual-content">TXMC Virtual</a>
                         {% endif %}
                         {% if tourney.info.state_qual %}
                             <a class="nav-link hl" data-bs-toggle="pill" href="#state-qualifier-content"><small>State Qualifier</small></a>
@@ -74,9 +74,9 @@
                                 <div class="tab-pane fade" id="in-person-content">
                                     {{ macs.in_person_tab() }}
                                 </div>
-                            {% elif tourney.info.type == 'virtual' %}
-                                <div class="tab-pane fade" id="virtual-content">
-                                    {{ macs.virtual_tab() }}
+                            {% elif tourney.info.type == 'txmcvirtual' %}
+                                <div class="tab-pane fade" id="txmc-virtual-content">
+                                    {{ macs.txmc_virtual_tab() }}
                                 </div>
                             {% endif %}
                             {% if tourney.info.state_qual %}

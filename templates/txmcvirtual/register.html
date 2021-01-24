@@ -1,0 +1,128 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Virtual Tournament Registration {% endblock %}
+
+{% block main %}
+    <style>
+        .rcard {
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 240, 238), rgb(255, 232, 202));
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .contentbutton, .contentbutton:hover {
+            margin: 10px auto 0 auto;
+            padding: 6px 15px;
+            background-image: linear-gradient(135deg, rgb(30, 0, 255), rgb(25, 2, 152));
+            box-shadow: black 2px 2px 8px 0px;
+            font-weight: 600;
+            text-align: center;
+            color: white;
+        }
+        .contentbutton:hover {
+            box-shadow: none;
+        }
+    </style>
+    <script>
+        $(document).ready(() => {
+            updateBreakdown();
+            $("input").on("input", updateBreakdown);
+        });
+        function updateBreakdown() {
+            let numTourneys = $("#tourneys input:checked").length;
+            let numTests = $("#students input:checked").length;
+            $("#numTourneys").html(numTourneys);
+            $("#numTests").html(numTests);
+            let total = (5.00 * numTourneys * numTests).toFixed(2);
+            let breakdown = "$5.00 X " + numTourneys + " X " + numTests + " = $" + total;
+            $("#breakdown").html(breakdown);
+            $("#payBtn").html("Pay $" + total);
+            $("#payBtn").attr("disabled", total == 0);
+        }
+    </script>
+    <div class="fullspace text-center pt-4">
+        <h1>Virtual Tournament Registration</h1>
+        <div class="container-lg mt-3 px-3">
+            <form class="rcard" onsuccess="stripeRedirect" enhance>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="p-3" id="tourneys">
+                            <h5>Upcoming Tournaments</h5>
+                            <span>Check the tournaments you would like to participate in <br>You may register for more in the future</span>
+                            {% for tourney in tourneys %}
+                                <div class="my-2 ps-3 d-flex">
+                                    <input class="form-check-input" type="checkbox" name="tourney[{{ tourney.id }}]" {% if request.args.get(tourney.id|string) %} checked {% endif %}>
+                                    <span class="ms-2">{{ tourney.info.name }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <hr class="d-sm-block d-md-none my-0 mx-2">
+                    </div>
+                    <div class="border-start border-secondary border-2 d-sm-none d-md-block p-0 my-2" style="width: 0px;"></div>
+                    <div class="col-md-6" style="margin-left: -2px;">
+                        <div class="p-3">
+                            <h5>Students & Events</h5>
+                            <div style="overflow-x: auto;">
+                                <table class="table table-sm mb-0 bg-white table-bordered table-striped css-serial" style="font-size: .9em;">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Grade</th>
+                                            <th><small>Number Sense</small></th>
+                                            <th><small>Math</small></th>
+                                            <th><small>Science</small></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="students">
+                                        {% for student in students %}
+                                            <tr>
+                                                <td></td>
+                                                <td>{{ student.first_name ~ ' ' ~ student.last_name }}</td>
+                                                <td>{{ ext.ordinal(student.grade) }}</td>
+                                                {% for test in ['NS', 'GM', 'GS'] %}
+                                                    <td>
+                                                        <input type="checkbox" name="student[{{ student.id }}][{{ test }}]">
+                                                    </td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-0 mx-2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="pt-3 pb-4 px-4">
+                            <h5>Details</h5>
+                            <p>After submitting your payment you cannot withdraw your registration. You may add to your previous registrations on the <a class="btn-link" href="/txmcvirtual/register/adv">Advanced Registration Page</a>. The $5 fee per test also includes a 1-hour training session on the day of the tournament. Further details about Virtual Tournaments and Training Sessions can be found in the link below. </p>
+                            <a href="/vtschedule" target="_blank" class="contentbutton">Virtual Tournaments Info & Schedule</a>
+                        </div>
+                        <hr class="d-sm-block d-md-none my-0 mx-2">
+                    </div>
+                    <div class="border-start border-secondary border-2 d-sm-none d-md-block p-0 my-2" style="width: 0px;"></div>
+                    <div class="col-md-6" style="margin-left: -2px;">
+                        <div class="p-3">
+                            <h5>Price Breakdown</h5>
+                            <div class="w-75 mx-auto text-center">
+                                <table class="table table-sm mb-1 table-bordered bg-white text-end" style="font-size: .9em;">
+                                    <tbody>
+                                        <tr><td>$5 Per Test Per Tournament</td></tr>
+                                        <tr><td><span id="numTourneys">0</span> Tournaments</td></tr>
+                                        <tr><td><span id="numTests">0</span> Test(s)</td></tr>
+                                        <tr><td id="breakdown">$5.00 X 0 X 0 = $0.00</td></tr>
+                                    </tbody>
+                                </table>
+                                <button id="payBtn" class="btn btn-success mx-auto w-50" type="submit">Pay $0.00</button>
+                                <div style="font-size: .9em;">After pressing this button you will be redirected to a payment page. Your credit card info will not be stored on our servers. </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -19,6 +19,30 @@ const checkRedirect = (res) => {
         window.location.href = res.redirect;
 };
 
+function stripeHelp(res) {
+    try {
+        Stripe(res.api_key)
+        .redirectToCheckout({
+            session_id : res.stripe_session_id
+        })
+        .then((result) => {
+            Swal.fire("Error", result.error.message, "error");
+        });
+    } catch (err) {
+        console.log(err);
+        window.location.href = window.location.href;
+    }
+}
+function stripeRedirect(res) {
+    if (res.hasOwnProperty("stripe_message")) {
+        Swal.fire("Info", res.stripe_message, "info")
+        .then(() => {
+            stripeHelp(res);
+        });
+    } else
+        stripeHelp(res);
+};
+
 $(document).ready(() => {
     enhanceForms();
     enhanceSelects();
@@ -69,10 +93,26 @@ function enhanceButtons() {
             $(button).attr("disabled", true);
             let url = $(button).attr("url") || window.location.href;
             let method = $(button).attr("method");
-            let data = JSON.parse($(button).attr("data"));
+            let data = $(button).attr("data") ? JSON.parse($(button).attr("data")) : "";
             let onsuccess = $(button).attr("onsuccess") ? window[$(button).attr("onsuccess")] : checkRedirect;
             let osargs = $(button).attr("osargs") || "";
-            sendAjax(url, method, data, button, $(), onsuccess, osargs);
+
+            if ($(button).attr("confirmDeleteMessage")) {
+                Swal.fire({
+                    icon: "question",
+                    title: $(button).attr("confirmDeleteMessage"), 
+                    showCancelButton: true, 
+                    confirmButtonText: "Cancel",
+                    cancelButtonText: "Delete",
+                    cancelButtonColor: "red"
+                }).then((result) => {
+                    if (result.isConfirmed)
+                        $(button).attr("disabled", false);    
+                    else
+                        sendAjax(url, method, data, button, $(), onsuccess, osargs);
+                });
+            } else
+                sendAjax(url, method, data, button, $(), onsuccess, osargs);
         });
         $(button).removeAttr("enhance");
     });

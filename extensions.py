@@ -1,11 +1,19 @@
+import os
 import re
 import pytz
 import random
 import string
+import stripe
 from datetime import datetime
 from functools import wraps
 from flask import session, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+load_dotenv()
+
+stripe.api_key = os.environ.get("STRIPE_API_KEY")
+STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
 
 db = SQLAlchemy()
 
@@ -46,6 +54,8 @@ def parseRequestForm(required=[]):
         allKeys = [x for x in re.split("[\\[\\]]+", key) if x]
         cn = ret
         for i, subkey in enumerate(allKeys):
+            if subkey.isnumeric():
+                subkey = int(subkey)
             if i == len(allKeys) - 1:
                 cn[subkey] = val
             else:

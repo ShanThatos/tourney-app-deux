@@ -4,18 +4,10 @@ import extensions
 from flask import Flask, request, redirect, session, render_template
 from flask_session import Session
 from flask_migrate import Migrate
-from dotenv import load_dotenv
 
 from extensions import *
 from models import *
 
-from routes.main import main as mainRoutes
-from routes.tournaments.main import main as tourneyMainRoutes
-from routes.tournaments.owner import main as tourneyOwnerRoutes
-from routes.admin import main as adminRoutes
-
-
-load_dotenv()
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "l_9FiY9e2fFPAiZK8kHQ68j-Zo75jTRQ7PIsRiM-wNY"
@@ -26,6 +18,7 @@ app.config["CACHE_STATIC_FILES"] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+# app.config['SQLALCHEMY_ECHO'] = True
 db.init_app(app)
 
 app.config["SESSION_PERMANENT"] = True
@@ -52,7 +45,14 @@ def after_request(response):
 def page_not_found(e):
     return render_template("/main/404.html")
 
-for route in [mainRoutes, adminRoutes, tourneyOwnerRoutes, tourneyMainRoutes]:
+from routes.main import main as mainRoutes
+from routes.tournaments.main import main as tourneyMainRoutes
+from routes.tournaments.owner import main as tourneyOwnerRoutes
+from routes.admin import main as adminRoutes
+from routes.account import main as accountRoutes
+from routes.txmcvirtual.account import main as txmcVirtualAccountRoutes
+
+for route in [mainRoutes, tourneyMainRoutes, tourneyOwnerRoutes, adminRoutes, accountRoutes, txmcVirtualAccountRoutes]:
     app.register_blueprint(route)
 
 app.add_template_global(extensions, name="ext")

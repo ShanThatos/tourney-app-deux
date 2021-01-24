@@ -81,7 +81,7 @@
     <h5 class="text-center my-1">In Person</h5>
     {% if not tourney %}
         <div class="my-2 ps-3 d-flex">
-            <input class="form-check-input" type="radio" name="info[type]" value="inperson">
+            <input class="form-check-input" type="radio" name="info[type]" value="inperson" required>
             <span class="ms-2">In Person Tournament</span>
         </div>
     {% endif %}
@@ -111,15 +111,15 @@
     </div>
 {%- endmacro %}
 
-{% macro virtual_tab() -%}
-    <h5 class="text-center my-1">Virtual</h5>
+{% macro txmc_virtual_tab() -%}
+    <h5 class="text-center my-1">TXMC Virtual</h5>
     {% if not tourney %}
         <div class="my-2 ps-3 d-flex">
-            <input class="form-check-input" type="radio" name="info[type]" value="virtual">
-            <span class="ms-2">Virtual Tournament</span>
+            <input class="form-check-input" type="radio" name="info[type]" value="txmcvirtual">
+            <span class="ms-2">TXMC Virtual Tournament</span>
         </div>
     {% else %}
-        <input type="hidden" name="info[type]" value="virtual">
+        <input type="hidden" name="info[type]" value="txmcvirtual">
     {% endif %}
     <div class="row mb-1">
         <div class="col-3">
@@ -140,6 +140,14 @@
     <div class="my-2 ps-3 d-flex">
         <input class="form-check-input" type="checkbox" name="info[upload_scores]" {% if tourney and tourney.info.upload_scores %}checked{% endif %}>
         <span class="ms-2">Allow Coaches to Enter Students' Scores</span>
+    </div>
+    <div class="row mb-1">
+        <div class="col-3">
+            <span class="align-middle">Stripe Price ID:</span>
+        </div>
+        <div class="col-9">
+            <input name="info[priceid]" type="text" class="form-control" placeholder="Price ID" value="{{ tourney.info.priceid if tourney else '' }}">
+        </div>
     </div>
 {%- endmacro %}
 
@@ -191,7 +199,7 @@
                 <tr>
                     <td>{{ tourney.owner.name }}</td>
                     <td>{{ tourney.owner.email }}</td>
-                    <td>Administrator</td>
+                    <td>Owner</td>
                     <td></td>
                 </tr>
                 {% for coach in tourney.collaborators.all() %}
