@@ -57,18 +57,18 @@ def txmcVirtualRegister(formData=None):
             coach.stripe_id = stripe.Customer.create(email=coach.email)["id"]
             db.session.commit()
         stripeSession = stripe.checkout.Session.create(
-            success_url = os.environ.get("PROXY") + "/vtschedule?ty=1", 
-            cancel_url = os.environ.get("PROXY") + "/txmcvirtual/register", 
+            success_url = PROXY + "/vtschedule?ty=1", 
+            cancel_url = PROXY + "/txmcvirtual/register", 
             line_items=line_items,
             payment_method_types=["card"], 
             mode="payment", 
             customer=coach.stripe_id
         )
-        order = Order(session_id=stripeSession["id"], info=regData)
+        order = Order(name="txmcvirtualregister", session_id=stripeSession["id"], info=regData)
         db.session.add(order)
         db.session.commit()
         return successJSON(
             stripe_message = "After closing this message, you will be redirected to the payment page. Your credit card information will not be stored on our servers. After your payment has been processed, you will not be allowed to change your registration.",
             stripe_session_id = stripeSession["id"], 
             api_key = STRIPE_PUBLIC_KEY
-            )
+        )

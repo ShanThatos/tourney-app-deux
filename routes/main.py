@@ -1,6 +1,7 @@
 import re
 import jinja2
-from flask import Blueprint, request, jsonify, session, render_template
+import stripe
+from flask import Blueprint, request, jsonify, session, render_template, Response
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import func
 from extensions import *
@@ -93,3 +94,23 @@ def students(formData=None):
         student.grade = formData[3]
     db.session.commit()
     return successJSON()
+
+@main.route("/webhook", methods=["POST"])
+def webhook():
+    # pprint.pprint(request.json)
+    try:
+        event = stripe.Webhook.construct_event(
+            request.get_data(), 
+            request.environ.get("HTTP_STRIPE_SIGNATURE"), 
+            STRIPE_ENDPOINT_SECRET
+        )
+    except ValueError as e:
+        print("HI1")
+        return "Invalid payload", 400
+    except stripe.error.SignatureVerificationError as e:
+        print(e)
+        print("HI2")
+        return "Invalid signature", 400
+    if event["type"] == "checkout.session.completed":
+        print("YAYYYYY" * 100)
+    return Response(status=200)

@@ -14,6 +14,9 @@ load_dotenv()
 
 stripe.api_key = os.environ.get("STRIPE_API_KEY")
 STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
+STRIPE_ENDPOINT_SECRET = os.environ.get("STRIPE_ENDPOINT_SECRET")
+
+PROXY = os.environ.get("PROXY")
 
 db = SQLAlchemy()
 

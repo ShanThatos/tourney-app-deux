@@ -119,5 +119,6 @@ class School(db.Model):
 class Order(db.Model):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
     session_id = Column(Text, unique=True, nullable=False)
     info = Column(JSONB)
