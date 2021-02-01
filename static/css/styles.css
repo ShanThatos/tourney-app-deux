@@ -122,3 +122,13 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #138496;
     border-color: #117a8b;
 }
+
+.btn-info:focus {
+    color: white;
+}
+
+.btn-info.disabled, .btn-info:disabled {
+    color: white;
+    background-color: #117a8b;
+    border-color: #117a8b;
+}

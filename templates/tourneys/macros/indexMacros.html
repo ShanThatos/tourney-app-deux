@@ -22,14 +22,21 @@
                     {% if tourney.info.training_session_link and tourney.id in coachData and coachData[tourney.id].paid %}
                         <a href="{{ tourney.info.training_session_link }}" class="btn btn-sm btn-primary m-1"><small>Training Session</small></a>
                     {% else %}
-                        <a class="btn btn-sm btn-primary m-1 disabled" disabled><small>Training Session</small></a>
+                        <a class="btn btn-sm btn-primary m-1 disabled"><small>Training Session</small></a>
                     {% endif %}
-                    <a href="" class="btn btn-sm btn-primary m-1">Results</a>
+                    {% if ext.current_time() >= ext.getDateTime(tourney.info.results_open) %}
+                        <a href="" class="btn btn-sm btn-primary m-1">Results</a>
+                    {% else %}
+                        <a href="" class="btn btn-sm btn-primary m-1 disabled">Results</a>
+                    {% endif %}
                     {% if session.id %}
                         <div class="flex-break-row"></div>
-                        <a href="/tournaments/{{ tourney.id }}/myregistrations" class="btn btn-sm btn-info m-1"><small>My Registrations</small></a>
-                        <a href="/tournaments/{{ tourney.id }}/uploadscores" class="btn btn-sm btn-info m-1"><small>Upload Scores</small></a>
-                        <a href="/tournaments/{{ tourney.id }}/scores" class="btn btn-sm btn-info m-1"><small>Scores</small></a>
+                        <a href="/txmcvirtual/{{ tourney.id }}/myregistrations" class="btn btn-sm btn-info m-1"><small>My Registrations</small></a>
+                        {% if ext.getDateTime(tourney.date + "T07:00") <= ext.current_time() <= ext.getDateTime(tourney.date + "T17:00") %}
+                            <a href="/tournaments/{{ tourney.id }}/uploadscores" class="btn btn-sm btn-info m-1"><small>Upload Scores</small></a>
+                        {% else %}
+                            <a class="btn btn-sm btn-info m-1 disabled"><small>Upload Scores</small></a>
+                        {% endif %}
                     {% endif %}
                     {% if ext.has_tourney_access(tourney.id) %}
                         <div class="flex-break-row"></div>

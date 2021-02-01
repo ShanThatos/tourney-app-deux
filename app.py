@@ -48,11 +48,13 @@ def page_not_found(e):
 from routes.main import main as mainRoutes
 from routes.tournaments.main import main as tourneyMainRoutes
 from routes.tournaments.owner import main as tourneyOwnerRoutes
+from routes.tournaments.account import main as tourneyAccountRoutes
 from routes.admin import main as adminRoutes
 from routes.account import main as accountRoutes
+from routes.txmcvirtual.main import main as txmcVirtualMainRoutes
 from routes.txmcvirtual.account import main as txmcVirtualAccountRoutes
 
-for route in [mainRoutes, tourneyMainRoutes, tourneyOwnerRoutes, adminRoutes, accountRoutes, txmcVirtualAccountRoutes]:
+for route in [mainRoutes, tourneyMainRoutes, tourneyOwnerRoutes, tourneyAccountRoutes, adminRoutes, accountRoutes, txmcVirtualMainRoutes, txmcVirtualAccountRoutes]:
     app.register_blueprint(route)
 
 app.add_template_global(extensions, name="ext")

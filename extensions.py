@@ -147,7 +147,7 @@ def require_tourney_exists(f):
         tourney = dictify(db.engine.execute("SELECT * FROM tourneys WHERE id = '%s'" % str(kwargs["tourney_id"])))
         if not tourney:
             return redirect("/tournaments")
-        return f(*args, **kwargs)
+        return f(*args, **kwargs, tourney=tourney[0])
     return decorated_function
 
 def random_password(length):
@@ -179,6 +179,10 @@ def current_time():
     return datetime.now(CST_TZ).replace(tzinfo=None)
 
 def getDateTime(dt):
+    if type(dt) == datetime:
+        return dt
     if "T" in dt:
+        if dt.count(":") == 1:
+            return datetime.strptime(dt, "%Y-%m-%dT%H:%M")
         return datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
     return datetime.strptime(dt, "%Y-%m-%d")

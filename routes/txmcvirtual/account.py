@@ -5,6 +5,16 @@ from models import *
 
 main = Blueprint("txmcvirtual.account", __name__, url_prefix="/txmcvirtual")
 
+@main.route("/<int:tourney_id>/myregistrations")
+@login_required
+@require_tourney_exists
+def myregistrations(tourney_id, tourney=None):
+    data = execute("virtual_tourney_reg", session["id"], tourney_id)[0]["data"]
+    students = Coach.query.get(session["id"]).students.order_by(
+        Student.grade.asc(), Student.first_name.asc(), 
+        Student.last_name.asc()).all()
+    return render_template("/txmcvirtual/registrations.html", tourney=tourney, students=students, data=data)
+
 def finishRegistration(data):
     coach_id = data["coach_id"]
     regData = data["data"]

@@ -18,3 +18,9 @@ SELECT JSON_OBJECT_AGG(tourney_id, t.json_object_agg) AS data FROM
 		GROUP BY tourney_id) t;
 virtual_adv_reg_check
 SELECT * FROM tourneystudent WHERE (tourney_id, student_id, test) IN %s AND taking_test;
+virtual_tourney_reg
+SELECT JSON_OBJECT_AGG(student_id, t.json_object_agg) AS data FROM 
+	(SELECT student_id, JSON_OBJECT_AGG(test, taking_test)
+		FROM tourneystudent ts, students s
+		WHERE taking_test AND ts.student_id = s.id AND s.coach_id = %s AND ts.tourney_id = %s
+		GROUP BY student_id) t;

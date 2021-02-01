@@ -27,6 +27,7 @@
         $(document).ready(() => {
             updateBreakdown();
             $("input").on("input", updateBreakdown);
+            $("#tourneys input:checked").addClass("changed");
         });
         function updateBreakdown() {
             let numTourneys = $("#tourneys input:checked").length;

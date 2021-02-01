@@ -1,0 +1,91 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Virtual Tournaments Info & Schedule {% endblock %}
+
+{% block main %}
+    <div class="fullspace text-center">
+        <div class="container-md mt-3">
+            <div class="container">
+                <h1>TXMC Virtual Tournaments Info & Schedule</h1>
+                <div class="bg-light shadow rounded p-3 mt-3">
+                    <div class="row">
+                        <div class="col-md-6 fs-6">
+                            <h4>Description</h4>
+                            <p>We are organizing a series of virtual online competitions for Number Sense, General Math, and Science every Saturday. Both your registration and payment will be done completely online through a secure system. After submitting your payment, you cannot remove your registration. On the day of the tournament (anytime after 7 AM CST), parents (or students) will have to: Print out the test(s) for your students (Tests can be found under the All Tests button on this page), read and sign the honor pledge on the cover page of the test, have students take the timed test, parent or student may grade the test, upload your student's scores before 5 PM CST. After 5 PM, the results/leaderboard will be available. The $5 fee per test also includes an optional training session on the day of the tournament during which we will review some of the problems. The link to the Zoom training session will be provided on the tournaments page.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Events</h4>
+                            <div class="text-start px-4">
+                                <span class="fw-bold">Elementary:</span>
+                                <span>Number Sense, General Math, Science</span>
+                                <br>
+                                <span class="fw-bold">Middle School:</span>
+                                <span>Number Sense, General Math, Science</span>
+                            </div>
+                            <hr>
+                            <h4>Training Sessions</h4>
+                            <div class="text-start px-4">
+                                <span class="fw-bold">Elementary:</span>
+                                <span>5:30 - 6:30 PM On Zoom</span>
+                                <br>
+                                <span class="fw-bold">Middle School:</span>
+                                <span>7:00 - 8:00 PM On Zoom</span>
+                                <br>
+                                <span class="ms-5">-- On the day of a TXMC Virtual Tournament</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="p-3">
+                        <h4>Saturday TXMC Virtual Tournament Schedule</h4>
+                        <table class="table table-striped table-bordered border border-dark border-3">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>7 AM</td>
+                                    <td>
+                                        <p class="mb-0">All tests are released -- Access them on the <a class="btn-link" href="/tournaments">Tournaments Page</a></p>
+                                        <p class="mb-0 fs-6">You must be logged in and registered for that tournament to access the tests</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4 PM</td>
+                                    <td><p class="mb-0">Registration closes</p></td>
+                                </tr>
+                                <tr>
+                                    <td>5 PM</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-6 border-end border-dark border-2">
+                                                <p class="mb-0">Scores Are Due</p>
+                                                <p class="mb-0 fs-6">Upload Scores on the <a class="btn-link" href="/tournaments">Tournaments Page</a></p>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="h-100 d-flex justify-content-center align-items-center">
+                                                    <p class="mb-1">Results Released</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><small>5:30 PM - 6:30 PM</small></td>
+                                    <td><p class="mb-0">Elementary Training Session</p></td>
+                                </tr>
+                                <tr>
+                                    <td><small>7:00 PM - 8:00 PM</small></td>
+                                    <td><p class="mb-0">Middle School Training Session</p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
