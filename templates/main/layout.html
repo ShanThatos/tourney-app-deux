@@ -42,14 +42,14 @@
                 <div class="collapse navbar-collapse justify-content-end pe-4" id="nvtoggle">
                     <ul class="navbar-nav justify-content-end ml-auto" style="white-space: nowrap;">
                         {% set items = [("/", "Home"), ("/register", "Register"), ("/login", "Login"), ("", "Tournaments")] %}
-                        {% if "id" in session %}
-                            {% if session["admin"] %}
+                        {% if session.id %}
+                            {% if session.admin %}
                                 {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Admin"), ("", "Account")] %}
                             {% else %}
                                 {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Account")] %}
                             {% endif %}
                         {% endif %}
-                        {% if "dataentry_id" in session %}
+                        {% if session.dataentry_id %}
                             {% set items = [("/", "Home"), ("/dataentry/scores", "Scores"), ("/dataentry/tiebreakers", "Tiebreakers"), ("/tournaments/{{ session.tourney_id }}/results", "Results"), ("/logout", "Logout")] %}
                         {% endif %}
                         {% for href, text in items %}
@@ -59,6 +59,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
                                         <li><a href="/tournaments" class="dropdown-item py-1 border">All Tournaments</a></li>
                                         <li><a href="/txmcvirtual/register" class="dropdown-item py-1 border">Register For TXMC Virtual Tournaments</a></li>
+                                        <li><a href="/txmcvirtual/register/adv" class="dropdown-item py-1 border">Virtual Tournament Advanced Registration</a></li>
                                     </ul>
                                 </li>
                             {% elif text == "Admin" %}
@@ -113,8 +114,9 @@
                                     <h5>LINKS <i class="fas fa-link"></i></h5>
                                     <div class="d-flex flex-row flex-wrap align-content-start pe-2">
                                         {% for href, text in [("/register", "REGISTER"), ("/login", "LOGIN"),
-                                            ("/students", "STUDENTS"), ("/tournaments", "TOURNAMENTS"), ("/contact", "CONTACT US")] %}
-                                            <a href="{{ href }}" style="margin-right: 20px; color: rgb(194, 236, 255);">{{ text }}</a>
+                                            ("/students", "STUDENTS"), ("/tournaments", "TOURNAMENTS"), ("/contact", "CONTACT US"),
+                                            ("/txmcvirtual/register", "TXMC VIRTUAL REGISTRATION")] %}
+                                            <a href="{{ href }}" class="btn-link" style="margin-right: 20px; color: rgb(194, 236, 255);">{{ text }}</a>
                                         {% endfor %}
                                     </div>
                                 </div>

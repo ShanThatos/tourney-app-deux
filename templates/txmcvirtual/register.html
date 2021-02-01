@@ -43,7 +43,7 @@
     <div class="fullspace text-center pt-4">
         <h1>Virtual Tournament Registration</h1>
         <div class="container-lg mt-3 px-3">
-            <form class="rcard" onsuccess="stripeRedirect" enhance>
+            <form class="rcard" onlychanges="1" onsuccess="stripeRedirect" enhance>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="p-3" id="tourneys">
@@ -51,10 +51,22 @@
                             <span>Check the tournaments you would like to participate in <br>You may register for more in the future</span>
                             {% for tourney in tourneys %}
                                 <div class="my-2 ps-3 d-flex">
-                                    <input class="form-check-input" type="checkbox" name="tourney[{{ tourney.id }}]" {% if request.args.get(tourney.id|string) %} checked {% endif %}>
-                                    <span class="ms-2">{{ tourney.info.name }}</span>
+                                    {% if tourney.tourneycoach.filter_by(coach_id=session.id).first().paid %}
+                                        <input class="form-check-input" type="checkbox" disabled>
+                                        <span class="ms-2" style="color: gray;">
+                                            <span style="color: red; font-weight: bold;">*</span>
+                                            {{ tourney.info.name }}
+                                        </span>
+                                    {% else %}
+                                        <input class="form-check-input" type="checkbox" name="tourney[{{ tourney.id }}]" {% if request.args.get(tourney.id|string) %} checked {% endif %}>
+                                        <span class="ms-2">{{ tourney.info.name }}</span>
+                                    {% endif %}
                                 </div>
                             {% endfor %}
+                            <div class="mx-auto" style="max-width: 450px;">
+                                <span style="color: red; font-weight: bold;">*</span>
+                                <span style="font-size: .9em;">You have already registered for this tournament but may add to your registration on the <a class="btn-link" href="/txmcvirtual/register/adv">Advanced Registration Page</a></span>
+                            </div>
                         </div>
                         <hr class="d-sm-block d-md-none my-0 mx-2">
                     </div>
@@ -82,7 +94,7 @@
                                                 <td>{{ ext.ordinal(student.grade) }}</td>
                                                 {% for test in ['NS', 'GM', 'GS'] %}
                                                     <td>
-                                                        <input type="checkbox" name="student[{{ student.id }}][{{ test }}]">
+                                                        <input class="form-check-input" type="checkbox" name="student[{{ student.id }}][{{ test }}]">
                                                     </td>
                                                 {% endfor %}
                                             </tr>
@@ -98,7 +110,7 @@
                     <div class="col-md-6">
                         <div class="pt-3 pb-4 px-4">
                             <h5>Details</h5>
-                            <p>After submitting your payment you cannot withdraw your registration. You may add to your previous registrations on the <a class="btn-link" href="/txmcvirtual/register/adv">Advanced Registration Page</a>. The $5 fee per test also includes a 1-hour training session on the day of the tournament. Further details about Virtual Tournaments and Training Sessions can be found in the link below. </p>
+                            <p style="text-align: justify; text-align-last: center;">After submitting your payment you cannot withdraw your registration. You may add to your previous registrations on the <a class="btn-link" href="/txmcvirtual/register/adv">Advanced Registration Page</a>. The $5 fee per test also includes a 1-hour training session on the day of the tournament. Further details about Virtual Tournaments and Training Sessions can be found in the link below. </p>
                             <a href="/vtschedule" target="_blank" class="contentbutton">Virtual Tournaments Info & Schedule</a>
                         </div>
                         <hr class="d-sm-block d-md-none my-0 mx-2">

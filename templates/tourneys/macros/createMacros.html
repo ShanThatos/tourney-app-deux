@@ -73,7 +73,7 @@
     </div>
     <div class="my-2">
         <span>Description:</span>
-        <textarea name="info[description]" form="createForm" class="form-control form-control-sm" rows="4" placeholder="Description" value="{{ tourney.info.description if tourney else '' }}"></textarea>
+        <textarea name="info[description]" form="createForm" class="form-control form-control-sm" rows="4" placeholder="Description">{{ tourney.info.description if tourney else '' }}</textarea>
     </div>
 {%- endmacro %}
 

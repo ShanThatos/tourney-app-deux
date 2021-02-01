@@ -1,14 +1,19 @@
 var originalSerializeArray = $.fn.serializeArray;
 $.fn.extend({
     serializeArray: function () {
+        let onlychanges = $(this).attr("onlychanges");
+        if (onlychanges)
+            $("input:not(.changed), select:not(.changed), textarea:not(.changed)").prop("disabled", true);
         var brokenSerialization = originalSerializeArray.apply(this);
-        var checkboxValues = $(this).find('input[type=checkbox]').map(function () {
+        var checkboxValues = $(this).find('input[type=checkbox]:enabled').map(function () {
             return { 'name': this.name, 'value': this.checked };
         }).get();
         var checkboxKeys = $.map(checkboxValues, function (element) { return element.name; });
         var withoutCheckboxes = $.grep(brokenSerialization, function (element) {
             return $.inArray(element.name, checkboxKeys) == -1;
         });
+        if (onlychanges)
+            $("input:not(.changed), select:not(.changed), textarea:not(.changed)").prop("disabled", false);
 
         return $.merge(withoutCheckboxes, checkboxValues);
     }
@@ -19,7 +24,7 @@ const checkRedirect = (res) => {
         window.location.href = res.redirect;
 };
 
-function stripeHelp(res) {
+function stripeRedirect(res) {
     try {
         Stripe(res.api_key)
         .redirectToCheckout({
@@ -29,18 +34,9 @@ function stripeHelp(res) {
             Swal.fire("Error", result.error.message, "error");
         });
     } catch (err) {
-        console.log(err);
-        // window.location.href = window.location.href;
+        alert(err);
+        window.location.href = window.location.href;
     }
-}
-function stripeRedirect(res) {
-    if (res.hasOwnProperty("stripe_message")) {
-        Swal.fire("Info", res.stripe_message, "info")
-        .then(() => {
-            stripeHelp(res);
-        });
-    } else
-        stripeHelp(res);
 };
 
 $(document).ready(() => {
@@ -50,6 +46,9 @@ $(document).ready(() => {
 });
 
 function enhanceForms() {
+    $('input, select, textarea').on('change', function() {
+        $(this).addClass('changed');
+    });
     $("form[enhance]").each((index, form) => {
         $(form).submit((e) => {
             let buttons = $(form).find("button[type='submit']");
@@ -130,8 +129,16 @@ function sendAjax(url, method, data, buttons, formInputs, onsuccess, osargs) {
     .done((res, status, xhr) => {
         if (res.status == "Success") {
             $(formInputs).val("");
-            if (onsuccess) onsuccess(res, osargs);
-            if (res.hasOwnProperty("message")) Swal.fire("Success", res.message, "success");
+            if (res.hasOwnProperty("message")) 
+                Swal.fire(res.title || "Success", res.message, res.icon || "success")
+                .then(() => {
+                    if (!res.ignoreonsuccess && onsuccess) onsuccess(res, osargs);
+                    checkRedirect(res);
+                });
+            else if (!res.ignoreonsuccess && onsuccess) {
+                onsuccess(res, osargs);
+                checkRedirect(res);
+            }
         } else if (res.status == "Failure")
             showErrorMessage(res.message, enableButtons);
         else

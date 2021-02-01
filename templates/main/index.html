@@ -98,7 +98,7 @@
     </style>
     <section class="topsection">
         <h1 class="imageheading slidefromright">Experience Math <br/>Like Never Before</h1>
-        {% if "id" in session %}
+        {% if session.id %}
             <div class="imagebuttonsbox slidefromright">
                 <a href="/students" class="imagebutton studentsbutton">Your Students</a>
                 <a href="/tournaments" class="imagebutton tournamentsbutton">Tournaments</a>
@@ -117,7 +117,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6 d-flex flex-column mb-4">
-                    <h3 class="contentheader">Virtual Tournaments</h3>
+                    <h3 class="contentheader">TXMC Virtual Tournaments</h3>
                     <p class="content">We are organizing a series of Elementary & Middle School weekly virtual tournaments for Number Sense, Math, and Science. Both your registration and payment are done online. The $5 fee per event also includes an optional 1-hour training session after 5:30 PM on the day of each tournament. Further details can be found in the links below. </p>
                     <a href="/vtinstructions" class="contentbutton mt-3">Registration Instructions</a>
                     <a href="/vtschedule" class="contentbutton">Virtual Tournaments Info & Schedule</a>

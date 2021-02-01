@@ -110,3 +110,15 @@ h1, h2, h3, h4, h5, h6 {
     height: 0;
     margin: 0;
 }
+
+.btn-info {
+    color: white;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-info:hover {
+    color: white;
+    background-color: #138496;
+    border-color: #117a8b;
+}

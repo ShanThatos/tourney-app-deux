@@ -61,5 +61,5 @@ def accounts(formData=None):
         return render_template("admin/accounts.html", coaches=Coach.query.all())
     elif request.method == "POST":
         session["id"] = int(formData[1])
-        session["admin"] = formData[0]
+        session["admin"] = formData[0] == 'true'
         return successJSON(redirect="/")

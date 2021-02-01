@@ -71,8 +71,8 @@ class TourneyCoach(db.Model):
     coach_id = Column(Integer, ForeignKey("coaches.id"), nullable=False)
     paid = Column(Boolean, default=False, nullable=False)
     comments = Column(Text, default="", nullable=False)
-    coach = relationship("Coach", backref=backref("tourneycoach", cascade="all, delete-orphan"))
-    tourney = relationship("Tourney", backref=backref("tourneycoach", cascade="all, delete-orphan"))
+    coach = relationship("Coach", backref=backref("tourneycoach", lazy="dynamic", cascade="all, delete-orphan"))
+    tourney = relationship("Tourney", backref=backref("tourneycoach", lazy="dynamic", cascade="all, delete-orphan"))
     __table_args__ = (UniqueConstraint("tourney_id", "coach_id", name="tc_constraint"),)
 
 class TourneyStudent(db.Model):
@@ -84,10 +84,10 @@ class TourneyStudent(db.Model):
     test = Column(Text, nullable=False)
     score = Column(Integer)
     tie = Column(Text, default="A", nullable=False)
-    reg_status = Column(Text, nullable=False)
+    reg_status = Column(Text, default="OPEN", nullable=False)
     student = relationship("Student", backref=backref("tourneystudent", cascade="all, delete-orphan"))
     tourney = relationship("Tourney", backref=backref("tourneystudent", cascade="all, delete-orphan"))
-    __table_args__ = (UniqueConstraint("tourney_id", "student_id", name="ts_constraint"),)
+    __table_args__ = (UniqueConstraint("tourney_id", "student_id", "test", name="ts_constraint"),)
 
 class TourneyCollabs(db.Model):
     __tablename__ = "tourneycollabs"

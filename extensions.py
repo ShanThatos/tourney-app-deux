@@ -66,8 +66,33 @@ def parseRequestForm(required=[]):
                 cn = cn[subkey]
     return ret
 
+def _fix(arg):
+    if type(arg) is str and arg.isnumeric():
+        return int(arg)
+    elif type(arg) is list:
+        return [_fix(x) for x in arg]
+    elif type(arg) is dict:
+        return {_fix(x):_fix(y) for x,y in arg.items()}
+    return arg
 def dictify(result):
-    return [{x[0]:x[1] for x in row.items()} for row in result]
+    return [{_fix(x[0]):_fix(x[1]) for x in row.items()} for row in result]
+
+def _normalize(arg):
+    if type(arg) is list:
+        return "(" + ",".join([_normalize(x) for x in arg]) + ")"
+    return f"'{arg}'"
+def execute(scriptName, *args, **kwargs):
+    script = scripts[scriptName].strip().removesuffix(";")
+    tokens = re.split(" +", script)
+    ci = 0
+    for i in range(len(tokens)):
+        token = tokens[i]
+        if re.fullmatch(r"%s", token):
+            tokens[i] = _normalize(args[ci])
+            ci += 1
+        elif match := re.fullmatch(r":([a-zA-Z]\w*)", token):
+            tokens[i] = _normalize(kwargs[match.group(1)])
+    return dictify(db.engine.execute(" ".join(tokens) + ";"))
 
 def require_form_keys(keys, method="POST"):
     def decorator(f):
@@ -102,9 +127,10 @@ def admin_required(f):
 
 def has_tourney_access(tourney_id):
     if "id" not in session: return False
-    tourney = dictify(db.engine.execute("SELECT * FROM tourneys WHERE id = '%s'" % str(tourney_id)))
-    if tourney[0]["coach_id"] == session["id"]: return True
-    if session["admin_access"]: return True
+    if session["admin"]: return True
+    tourney = dictify(db.engine.execute("SELECT *, ARRAY(SELECT coach_id FROM tourneycollabs tc WHERE tc.tourney_id = t.id) AS collabs FROM tourneys t WHERE id = '%s';" % str(tourney_id)))[0]
+    if tourney["coach_id"] == session["id"]: return True
+    if session["id"] in tourney["collabs"]: return True
     return False
 
 def require_tourney_access(f):
@@ -112,6 +138,15 @@ def require_tourney_access(f):
     def decorated_function(*args, **kwargs):
         if not has_tourney_access(kwargs["tourney_id"]):
             return redirect(url_for('main.login', continueURL=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def require_tourney_exists(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        tourney = dictify(db.engine.execute("SELECT * FROM tourneys WHERE id = '%s'" % str(kwargs["tourney_id"])))
+        if not tourney:
+            return redirect("/tournaments")
         return f(*args, **kwargs)
     return decorated_function
 

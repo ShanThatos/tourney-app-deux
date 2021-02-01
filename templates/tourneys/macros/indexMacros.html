@@ -2,30 +2,41 @@
     <div class="col-lg-4 my-2">
         <div class="tourneycard">
             <div class="tc-head text-center">
-                {{ tourney["info"]["name"]|safe }}
+                {{ tourney.info.name|safe }}
             </div>
             <div class="tc-content" style="font-size: .9em;">
-                <b>Date: </b>{{ ext.formatDateTime(tourney["date"], "%A, %b %d, %Y") }} <br>
-                <b>Registration Close: </b>{{ ext.formatDateTime(tourney["close_date"], "%b %d, %I:%M %p") }} <br>
-                <b>Grade Levels: </b>{{ ext.ordinal(tourney["min_grade"]) }} - {{ ext.ordinal(tourney["max_grade"]) }} <br>
-                <b>Price: </b>${{ tourney["info"]["price"] }} per test <br>
-                {% if tourney["info"]["description"] %}
+                <b>Date: </b>{{ ext.formatDateTime(tourney.date, "%A, %b %d, %Y") }} <br>
+                <b>Registration Close: </b>{{ ext.formatDateTime(tourney.close_date, "%b %d, %I:%M %p") }} <br>
+                <b>Grade Levels: </b>{{ ext.ordinal(tourney.min_grade) }} - {{ ext.ordinal(tourney.max_grade) }} <br>
+                <b>Price: </b>${{ tourney.info.price }} per test <br>
+                {% if tourney.info.description %}
                     <b style="color: rgb(0, 0, 200);"><u>Description: </u></b> <br>
-                    <p class="tc-description">{{ tourney["info"]["description"]|safe }}</p>
+                    <p class="tc-description">{{ tourney.info.description|safe }}</p>
                 {% endif %}
             </div>
             <div class="tc-options d-flex justify-content-center align-items-center flex-wrap">
-                {% if ext.current_time() <= ext.getDateTime(tourney["close_date"]) %}
-                    <a href="/txmcvirtual/register?{{ tourney['id'] }}=true" class="btn btn-sm btn-primary m-1">Register</a>
-                {% endif %}
-                <a href="" class="btn btn-sm btn-primary m-1">Details</a>
-                <a href="" class="btn btn-sm btn-primary m-1">Schedule</a>
-                <a href="" class="btn btn-sm btn-primary m-1">Results</a>
-                {% if ext.has_tourney_access(tourney["id"]) %}
-                    <div class="flex-break-row"></div>
-                    <a href="/tournaments/{{ tourney['id'] }}/edit" class="btn btn-sm btn-success m-1">Edit</a>
-                    <a href="" class="btn btn-sm btn-success m-1"><small>Attending Schools</small></a>
-                    <a href="" class="btn btn-sm btn-success m-1">Scores</a>
+                {% if tourney.info.type == "txmcvirtual" %}
+                    {% if ext.current_time() <= ext.getDateTime(tourney.close_date) %}
+                        <a href="/txmcvirtual/register?{{ tourney.id }}=true" class="btn btn-sm btn-primary m-1">Register</a>
+                    {% endif %}
+                    {% if tourney.info.training_session_link and tourney.id in coachData and coachData[tourney.id].paid %}
+                        <a href="{{ tourney.info.training_session_link }}" class="btn btn-sm btn-primary m-1"><small>Training Session</small></a>
+                    {% else %}
+                        <a class="btn btn-sm btn-primary m-1 disabled" disabled><small>Training Session</small></a>
+                    {% endif %}
+                    <a href="" class="btn btn-sm btn-primary m-1">Results</a>
+                    {% if session.id %}
+                        <div class="flex-break-row"></div>
+                        <a href="/tournaments/{{ tourney.id }}/myregistrations" class="btn btn-sm btn-info m-1"><small>My Registrations</small></a>
+                        <a href="/tournaments/{{ tourney.id }}/uploadscores" class="btn btn-sm btn-info m-1"><small>Upload Scores</small></a>
+                        <a href="/tournaments/{{ tourney.id }}/scores" class="btn btn-sm btn-info m-1"><small>Scores</small></a>
+                    {% endif %}
+                    {% if ext.has_tourney_access(tourney.id) %}
+                        <div class="flex-break-row"></div>
+                        <a href="/tournaments/{{ tourney.id }}/edit" class="btn btn-sm btn-success m-1">Edit</a>
+                        <a href="" class="btn btn-sm btn-success m-1"><small>Attending Schools</small></a>
+                        <a href="" class="btn btn-sm btn-success m-1">Scores</a>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

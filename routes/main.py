@@ -95,9 +95,10 @@ def students(formData=None):
     db.session.commit()
     return successJSON()
 
+from .txmcvirtual.account import finishRegistration
+
 @main.route("/webhook", methods=["POST"])
 def webhook():
-    # pprint.pprint(request.json)
     try:
         event = stripe.Webhook.construct_event(
             request.get_data(), 
@@ -105,12 +106,14 @@ def webhook():
             STRIPE_ENDPOINT_SECRET
         )
     except ValueError as e:
-        print("HI1")
-        return "Invalid payload", 400
+        return {}, 400
     except stripe.error.SignatureVerificationError as e:
-        print(e)
-        print("HI2")
-        return "Invalid signature", 400
+        return {}, 400
     if event["type"] == "checkout.session.completed":
-        print("YAYYYYY" * 100)
-    return Response(status=200)
+        stripe_session_id = event["data"]["object"]["id"]
+        order = Order.query.filter_by(session_id=stripe_session_id).first()
+        if order.name == "txmcvirtualregister":
+            finishRegistration(order.info)
+            db.session.delete(order)
+            db.session.commit()
+    return {}
