@@ -37,6 +37,7 @@
         $(document).ready(() => {
             updateBreakdown();
             $("input").on("input", updateBreakdown);
+            $("#students input:checked").addClass("changed");
         });
         function updateBreakdown() {
             let numTests = $("#students input:checked").length;
@@ -46,6 +47,7 @@
             $("#breakdown").html(breakdown);
             $("#payBtn").html("Pay $" + total);
             $("#payBtn").attr("disabled", total == 0);
+            $("#students input:checked").addClass("changed");
         }
     </script>
     <div class="fullspace text-center pt-4">

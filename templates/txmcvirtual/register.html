@@ -40,6 +40,8 @@
             $("#breakdown").html(breakdown);
             $("#payBtn").html("Pay $" + total);
             $("#payBtn").attr("disabled", total == 0);
+            $("#tourneys input:checked").addClass("changed");
+            $("#students input:checked").addClass("changed");
         }
     </script>
     <div class="fullspace text-center pt-4">
