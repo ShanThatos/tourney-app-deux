@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "l_9FiY9e2fFPAiZK8kHQ68j-Zo75jTRQ7PIsRiM-wNY"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
-app.config["CACHE_STATIC_FILES"] = False
+app.config["CACHE_STATIC_FILES"] = os.environ.get("CACHE_STATIC_FILES", True)
 
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")

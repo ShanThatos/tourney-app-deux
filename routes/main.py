@@ -31,9 +31,7 @@ def register(formData=None):
     db.session.commit()
     session["id"] = coach.id
     session["admin"] = coach.admin
-    if not coach.students:
-        return redirect("/students")
-    return redirect("/")
+    return redirect("/students")
 
 @main.route("/login", methods=["GET", "POST", "PUT"])
 @require_form_keys("username password".split(" "))
@@ -56,7 +54,7 @@ def login(formData=None):
             return failJSON("Invalid Username/Password")
         session["id"] = coach.id
         session["admin"] = coach.admin
-        if not coach.students:
+        if not coach.students.first():
             return redirect(request.args.get("continueURL") or "/students")
         return redirect(request.args.get("continueURL") or "/")
     elif request.method == "PUT":
