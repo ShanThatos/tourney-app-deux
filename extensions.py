@@ -4,11 +4,14 @@ import pytz
 import random
 import string
 import stripe
+import smtplib
 from datetime import datetime
 from functools import wraps
 from flask import session, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 load_dotenv()
 
@@ -34,6 +37,19 @@ with open('procs.sql', 'r') as file:
                 scripts[scriptName] = " ".join(query)
                 scriptName = ""
                 query.clear()
+
+def sendEmail(recipient=None, subject=None, message=None):
+    msg = MIMEMultipart()
+    msg["From"] = "TXMC Online - TexasMathContests"
+    msg["To"] = recipient
+    msg["Subject"] = subject
+    msg.attach(MIMEText(message))
+    s = smtplib.SMTP("smtp.gmail.com", 587)
+    s.starttls()
+    s.login("texasmathcontests@gmail.com", os.environ.get("GMAIL_APP_PASSWORD"))
+    s.sendmail("texasmathcontests@gmail.com", recipient, msg.as_string())
+    s.quit()
+
 
 def failJSON(*args):
     if len(args) == 1:

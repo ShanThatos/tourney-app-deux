@@ -17,6 +17,11 @@ def myregistrations(tourney_id, tourney=None):
 
 def finishRegistration(data):
     coach_id = data["coach_id"]
+    sendEmail(
+        recipient=Coach.query.get(coach_id).email, 
+        subject="TXMC Virtual Tournament Registration Confirmation", 
+        message="Thank you for registering for TXMC Virtual Tournaments \n\n\t- TXMC Online"
+    )
     regData = data["data"]
     tids = list(set([x[0] for x in regData]))
     newTcs = []

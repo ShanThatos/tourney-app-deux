@@ -35,28 +35,43 @@ def register(formData=None):
         return redirect("/students")
     return redirect("/")
 
-@main.route("/login", methods=["GET", "POST"])
+@main.route("/login", methods=["GET", "POST", "PUT"])
 @require_form_keys("username password".split(" "))
+@require_form_keys(["email"], method="PUT")
 def login(formData=None):
     session.clear()
     if request.method == "GET":
         return render_template("/main/login.html")
-    formData[0] = formData[0].lower()
-    coach = Coach.query.filter(func.lower(Coach.email) == formData[0]).first()
-    if not coach: 
-        account = DataEntry.query.filter(func.lower(DataEntry.username) == formData[0]).first()
-        if not account or account.password != formData[1]:
+    elif request.method == "POST":
+        formData[0] = formData[0].lower()
+        coach = Coach.query.filter(func.lower(Coach.email) == formData[0]).first()
+        if not coach: 
+            account = DataEntry.query.filter(func.lower(DataEntry.username) == formData[0]).first()
+            if not account or account.password != formData[1]:
+                return failJSON("Invalid Username/Password")
+            session["dataentry_id"] = account.id
+            session["tourney_id"] = account.tourney_id
+            return redirect("/dataentry/scores")
+        if not check_password_hash(coach.password, formData[1]):
             return failJSON("Invalid Username/Password")
-        session["dataentry_id"] = account.id
-        session["tourney_id"] = account.tourney_id
-        return redirect("/dataentry/scores")
-    if not check_password_hash(coach.password, formData[1]):
-        return failJSON("Invalid Username/Password")
-    session["id"] = coach.id
-    session["admin"] = coach.admin
-    if not coach.students:
-        return redirect(request.args.get("continueURL") or "/students")
-    return redirect(request.args.get("continueURL") or "/")
+        session["id"] = coach.id
+        session["admin"] = coach.admin
+        if not coach.students:
+            return redirect(request.args.get("continueURL") or "/students")
+        return redirect(request.args.get("continueURL") or "/")
+    elif request.method == "PUT":
+        formData[0] = formData[0].lower()
+        coach = Coach.query.filter(func.lower(Coach.email) == formData[0]).first()
+        if not coach:
+            return failJSON("We could not find any accounts associated with that email")
+        newpass = random_password(6)
+        coach.password = generate_password_hash(newpass)
+        db.session.commit()
+        sendEmail(recipient=coach.email, subject="TXMC Online - Password Reset", 
+            message=f"TXMC Update: \nYour password has been reset.\n\nNew Password: {newpass}\n\nAfter logging in go to your account settings to change your password.\n\n\t- TXMC Online"
+        )
+        return successJSON("Your password has been reset. Please check your email for your new password. After logging in go to your Account Settings to change your password.")
+        
 
 @main.route("/logout")
 def logout():

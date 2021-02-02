@@ -5,5 +5,9 @@
 {% block main %}
     <div class="container p-5">
         <h1>Page Not Found</h1>
+        {% if request.url.endswith("/vtinstructions") %}
+            <h4>This page will be available shortly</h4>
+            <h4>Please use the instructions included in the email</h4>
+        {% endif %}
     </div>
 {% endblock %}

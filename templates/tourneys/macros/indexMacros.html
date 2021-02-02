@@ -24,6 +24,11 @@
                     {% else %}
                         <a class="btn btn-sm btn-primary m-1 disabled"><small>Training Session</small></a>
                     {% endif %}
+                    {% if tourney.info.tests_link and ext.getDateTime(tourney.date + "T07:00") <= ext.current_time() and tourney.id in coachData and coachData[tourney.id].paid %}
+                        <a href="{{ tourney.info.tests_link }}" class="btn btn-sm btn-primary m-1"><small>All Tests</small></a>
+                    {% else %}
+                        <a class="btn btn-sm btn-primary m-1 disabled"><small>All Tests</small></a>
+                    {% endif %}
                     {% if ext.current_time() >= ext.getDateTime(tourney.info.results_open) %}
                         <a href="" class="btn btn-sm btn-primary m-1">Results</a>
                     {% else %}

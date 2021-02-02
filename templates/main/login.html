@@ -39,7 +39,32 @@
                         <label for="password" class="form-label mt-3">Password </label>
                         <input name="password" id="password" type="password" class="form-control" placeholder="Password" required>
                     </div>
-                    <div class="flex-grow-1 text-center pt-4">
+                    <div class="text-center my-1">
+                        <a id="forgot" class="btn-link" style="cursor: pointer;">Forgot Your Password?</a>
+                        <script>
+                            $(document).ready(() => {
+                                $("#forgot").click(() => {
+                                    let email = $("#username").val();
+                                    Swal.fire({
+                                        title: "Forgot Your Password", 
+                                        input: "email", 
+                                        inputLabel: "Enter Your Email -- We'll send you a new password", 
+                                        inputPlaceholder: "Email/Username", 
+                                        inputValue: email
+                                    }).then((val) => {
+                                        if (val.value) {
+                                            sendAjax(
+                                                window.location.href, "PUT", 
+                                                {email: val.value}, $(), $(), 
+                                                undefined, 0
+                                            );
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                    </div>
+                    <div class="flex-grow-1 text-center pt-2">
                         <button class="mt-auto btn btn-success btn-lg fw-bold loginbtn" type="submit">Login</button>
                     </div>
                 </form>
