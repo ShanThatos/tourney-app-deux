@@ -58,7 +58,7 @@ def schoolgroups(formData=None):
 @require_form_keys(["admin", "coach_id"], method="POST")
 def accounts(formData=None):
     if request.method == "GET":
-        return render_template("admin/accounts.html", coaches=Coach.query.all())
+        return render_template("admin/accounts.html", coaches=Coach.query.order_by(Coach.id.asc()).all())
     elif request.method == "POST":
         session["id"] = int(formData[1])
         session["admin"] = formData[0] == 'true'
