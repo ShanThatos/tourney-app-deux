@@ -41,7 +41,7 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end pe-4" id="nvtoggle">
                     <ul class="navbar-nav justify-content-end ml-auto" style="white-space: nowrap;">
-                        {% set items = [("/", "Home"), ("/register", "Register"), ("/login", "Login"), ("", "Tournaments")] %}
+                        {% set items = [("/", "Home"), ("/register", "Sign Up"), ("/login", "Login"), ("", "Tournaments")] %}
                         {% if session.id %}
                             {% if session.admin %}
                                 {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Admin"), ("", "Account")] %}

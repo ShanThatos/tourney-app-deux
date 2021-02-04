@@ -51,6 +51,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>School</th>
                             <th>Grade</th>
                             <th>-</th>
                         </tr>
@@ -60,6 +61,7 @@
                             <tr sgstid="{{ student.id }}">
                                 <td>{{ student.id }}</td>
                                 <td>{{ student.first_name ~ ' ' ~ student.last_name }}</td>
+                                <td>{{ student.coach.school_name }}</td>
                                 <td>{{ student.grade }}</td>
                                 <td>
                                     <form method="PATCH" onsuccess="deleteRow" osargs="{{ student.id }}" enhance>

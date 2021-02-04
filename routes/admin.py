@@ -11,7 +11,7 @@ main = Blueprint("admin", __name__, url_prefix="/admin")
 @admin_required
 def create():
     if request.method == "GET":
-        return render_template("/tourneys/create.html", coaches=Coach.query.all())
+        return render_template("/tourneys/create.html", coaches=Coach.query.order_by(Coach.id).all())
     elif request.method == "POST":
         tourney = Tourney(parseRequestForm())
         db.session.add(tourney)
