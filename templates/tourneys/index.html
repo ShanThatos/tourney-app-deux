@@ -55,18 +55,13 @@
                 <a href="/vtschedule" target="_blank" class="contentbutton mx-auto mt-2">Virtual Tournaments Info & Schedule</a>
             </div>
         </div>
-        <div class="container-md" style="max-width: 1100px;">
-            {% for month in data %}
-                <div class="my-3"></div>
-                <h2>{{ month.month ~ ' ' ~ month.year }}</h2>
-                <hr class="my-2">
-                {% for tourney3 in ext.groupsof(3, month.tourneys) %}
-                    <div class="row">
-                        {% for tourney in tourney3 %}
-                            {{ tourney_card(tourney) }}
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+        <div class="container-md pt-4" style="max-width: 1100px;">
+            {% for tourney3 in ext.groupsof(3, data) %}
+                <div class="row">
+                    {% for tourney in tourney3 %}
+                        {{ tourney_card(tourney) }}
+                    {% endfor %}
+                </div>
             {% endfor %}
         </div>
     </section>

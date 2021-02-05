@@ -5,7 +5,7 @@ import random
 import string
 import stripe
 import smtplib
-from datetime import datetime
+import datetime
 from functools import wraps
 from flask import session, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -181,10 +181,11 @@ def groupsof(n, k):
     return ret
 
 def formatDateTime(dt, outputFormat):
+    if isinstance(dt, (datetime.datetime, datetime.date)): return dt.strftime(outputFormat)
     if "T" in dt:
-        date = datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
+        date = datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
     else:
-        date = datetime.strptime(dt, "%Y-%m-%d")
+        date = datetime.datetime.strptime(dt, "%Y-%m-%d")
     return date.strftime(outputFormat)
 
 def ordinal(n):
@@ -192,13 +193,12 @@ def ordinal(n):
 
 CST_TZ = pytz.timezone("America/Chicago")
 def current_time():
-    return datetime.now(CST_TZ).replace(tzinfo=None)
+    return datetime.datetime.now(CST_TZ).replace(tzinfo=None)
 
 def getDateTime(dt):
-    if type(dt) == datetime:
-        return dt
+    if isinstance(dt, (datetime.datetime, datetime.date)): return dt
     if "T" in dt:
         if dt.count(":") == 1:
-            return datetime.strptime(dt, "%Y-%m-%dT%H:%M")
-        return datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
-    return datetime.strptime(dt, "%Y-%m-%d")
+            return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M")
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
+    return datetime.datetime.strptime(dt, "%Y-%m-%d")

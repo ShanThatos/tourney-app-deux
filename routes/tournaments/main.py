@@ -9,4 +9,5 @@ def tourneyIndex():
     coachData = None
     if "id" in session:
         coachData = execute("tourney_index_coach_info", session["id"])[0]["data"]
-    return render_template("/tourneys/index.html", data = execute("tourney_index"), coachData = coachData)
+    data = Tourney.query.order_by(Tourney.date.asc()).all()
+    return render_template("/tourneys/index.html", data = data, coachData = coachData)
