@@ -37,8 +37,8 @@
                     {% if session.id %}
                         <div class="flex-break-row"></div>
                         <a href="/txmcvirtual/{{ tourney.id }}/myregistrations" class="btn btn-sm btn-info m-1"><small>My Registrations</small></a>
-                        {% if ext.getDateTime(tourney.date + "T07:00") <= ext.current_time() <= ext.getDateTime(tourney.date + "T17:00") %}
-                            <a href="/tournaments/{{ tourney.id }}/uploadscores" class="btn btn-sm btn-info m-1"><small>Upload Scores</small></a>
+                        {% if session.admin or ext.getDateTime(tourney.date + "T07:00") <= ext.current_time() %}
+                            <a href="/txmcvirtual/{{ tourney.id }}/uploadscores" class="btn btn-sm btn-info m-1"><small>Upload Scores</small></a>
                         {% else %}
                             <a class="btn btn-sm btn-info m-1 disabled"><small>Upload Scores</small></a>
                         {% endif %}
@@ -46,7 +46,7 @@
                     {% if ext.has_tourney_access(tourney.id) %}
                         <div class="flex-break-row"></div>
                         <a href="/tournaments/{{ tourney.id }}/edit" class="btn btn-sm btn-success m-1">Edit</a>
-                        <a href="" class="btn btn-sm btn-success m-1"><small>Attending Schools</small></a>
+                        <a href="/tournaments/{{ tourney.id }}/attending" class="btn btn-sm btn-success m-1"><small>Attending Schools</small></a>
                         <a href="" class="btn btn-sm btn-success m-1">Scores</a>
                     {% endif %}
                 {% endif %}

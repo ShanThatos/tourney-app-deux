@@ -68,3 +68,20 @@ def tourneyDataEntry(tourney_id, formData=None):
         db.session.delete(account)
         db.session.commit()
         return successJSON(id=account.id)
+
+@main.route("/<int:tourney_id>/attending", methods=["GET", "POST"])
+@require_tourney_access
+@require_form_keys(["coach_id", "paid", "comments"])
+def tourneyAttending(tourney_id, formData=None):
+    if request.method == "GET":
+        tourney = Tourney.query.get(tourney_id)
+        data = execute("tourney_attending", tourney_id)
+        return render_template("/tourneys/attending.html", tourney=tourney, data=data)
+    elif request.method == "POST":
+        formData[1] = formData[1] == "true"
+        if len(formData) == 2: formData.append("")
+        tc = TourneyCoach.query.filter_by(tourney_id=tourney_id, coach_id=formData[0]).first()
+        tc.paid = formData[1]
+        tc.comments = formData[2]
+        db.session.commit()
+        return successJSON("Your changes have been saved")

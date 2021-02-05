@@ -1,0 +1,54 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Scores {% endblock %}
+
+{% block main %}
+    <div class="fullspace text-center pt-3">
+        <h1>{{ tourney.info.name }} Scores</h1>
+        <div class="container-md mt-3">
+            <div class="container" style="max-width: 800px;">
+                <form keepinputs="1" onlychanges="1" enhance>
+                    <button class="btn btn-success mb-2" type="submit">Save Scores</button>
+                    <table class="table table-sm mb-0 bg-white table-bordered table-striped css-serial border border-dark border-3">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Grade</th>
+                                <th><small>Number Sense</small></th>
+                                <th><small>Math</small></th>
+                                <th><small>Science</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ student.first_name ~ ' ' ~ student.last_name }}</td>
+                                    <td>{{ ext.ordinal(student.grade) }}</td>
+                                    {% for test in ['NS', 'GM', 'GS'] %}
+                                        <td>
+                                            {% if data[student.id] and data[student.id][test] and data[student.id][test].taking_test %}
+                                                <input type="number" name="scores[{{ data[student.id][test].id }}]" 
+                                                    min="-400"
+                                                    max="400"
+                                                    {% if data[student.id][test].score %}
+                                                        value={{ data[student.id][test].score }}
+                                                    {% endif %}
+                                                    class="form-control-sm"
+                                                    style="min-width: 80px; max-width: 100px; padding: 0px 5px;"
+                                                >
+                                            {% else %}
+                                                <span>-</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

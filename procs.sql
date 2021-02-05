@@ -24,3 +24,26 @@ SELECT JSON_OBJECT_AGG(student_id, t.json_object_agg) AS data FROM
 		FROM tourneystudent ts, students s
 		WHERE taking_test AND ts.student_id = s.id AND s.coach_id = %s AND ts.tourney_id = %s
 		GROUP BY student_id) t;
+virtual_tourney_scores
+SELECT JSON_OBJECT_AGG(student_id, t.json_object_agg) AS data FROM 
+	(SELECT student_id, JSON_OBJECT_AGG(test, TO_JSON(ts))
+		FROM tourneystudent ts, students s
+		WHERE taking_test AND ts.student_id = s.id AND s.coach_id = %s AND ts.tourney_id = %s
+		GROUP BY student_id) t;
+tourney_attending
+SELECT *, 
+	(SELECT JSONB_OBJECT_AGG(t.sl, t.k)
+		FROM (SELECT t.sl, 
+			(JSONB_OBJECT_AGG(t.test, count) || JSONB_BUILD_OBJECT('T', SUM(count))) AS k
+			FROM (SELECT t.sl, t.test, COUNT(*)
+				FROM (SELECT *, (CASE WHEN s.grade <= 5 THEN 'E' ELSE 'M' END) AS sl
+						FROM tourneystudent ts, students s
+						WHERE ts.student_id = s.id
+							AND ts.tourney_id = tc.tourney_id
+							AND s.coach_id = c.id
+							AND ts.taking_test) t
+				GROUP BY t.sl, t.test) t
+			GROUP BY t.sl) t) AS data
+	FROM tourneycoach tc, coaches c
+	WHERE tc.coach_id = c.id AND tc.tourney_id = %s
+	ORDER BY school_name, name;

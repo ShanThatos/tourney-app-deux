@@ -1,0 +1,98 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Attending School {% endblock %}
+
+{% block main %}
+    <script>
+        function save(el, id) {
+            $(el).attr("disabled", true);
+            let cid = $(el).attr("cid");
+            let paid = $("input[cid=" + cid + "]").is(":checked");
+            let comments = $("textarea[cid=" + cid + "]").val();
+            sendAjax(
+                window.location.href, "POST", 
+                {coach_id: cid, paid: paid, comments: comments}, 
+                $(el), $(), 
+                () => {
+                    $(el).attr("disabled", true);
+                }, undefined
+            );
+        }
+        $(document).ready(() => {
+            let updateButton = (el) => {
+                $("button[cid=" + $(el.target).attr("cid") + "]").attr("disabled", false);
+            }
+            $("textarea").on("input", updateButton);
+            $("input").on("click", updateButton);
+        });
+    </script>
+    <div class="fullspace text-center pt-3">
+        <h1>{{ tourney.info.name }} Attending Schools</h1>
+        <div class="container-md mt-3">
+            <div class="container" style="max-width: 1000px;">
+                {% set school_levels = ['E', 'M'] %}
+                {% if tourney.max_grade <= 5 %}
+                    {% set school_levels = ['E'] %}
+                {% elif tourney.min_grade >= 6 %}
+                    {% set school_levels = ['M'] %}
+                {% endif %}
+                {% for sl in school_levels %}
+                    <h3>{{ "Elementary Schools" if sl == 'E' else "Middle Schools" }}</h3>
+                    <table class="table table-sm bg-white table-bordered table-striped css-serial border border-dark border-3">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>School</th>
+                                <th>Coach</th>
+                                <th><small>Number Sense</small></th>
+                                <th><small>Calculator</small></th>
+                                <th><small>Math</small></th>
+                                <th><small>Science</small></th>
+                                <th>Paid</th>
+                                <th>Comments</th>
+                                <th>-</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: .9em;">
+                            {% for row in data %}
+                                {% if sl in row.data %}
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ row.school_name }}</td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.data[sl].NS or 0 }}</td>
+                                        <td>{{ row.data[sl].CA or 0 }}</td>
+                                        <td>{{ row.data[sl].GM or 0 }}</td>
+                                        <td>{{ row.data[sl].GS or 0 }}</td>
+                                        {% if sl == 'M' and 'E' in row.data %}
+                                            <td colspan="3">-</td>
+                                        {% else %}
+                                            <td>
+                                                {% if tourney.info.type == 'txmcvirtual' %}
+                                                    <span>{{ '✓' if row.paid else '-' }}</span>
+                                                    <input cid="{{ row.coach_id }}" type="checkbox" {% if row.paid %} checked {% endif %} hidden>
+                                                {% else %}
+                                                    <input cid="{{ row.coach_id }}" type="checkbox" {% if row.paid %} checked {% endif %}>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <textarea cid="{{ row.coach_id }}" class="form-control form-control-sm" cols="20" rows="1"
+                                                    style="font-size: .8em; padding: 3px;"
+                                                >{{ row.comments if row.comments else '' }}</textarea>
+                                            </td>
+                                            <td>
+                                                <button cid="{{ row.coach_id }}" class="btn btn-success btn-sm" onclick="save(this, {{ row.coach_id }})" disabled>
+                                                    <i class="far fa-save"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

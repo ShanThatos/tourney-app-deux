@@ -9,11 +9,42 @@ main = Blueprint("txmcvirtual.account", __name__, url_prefix="/txmcvirtual")
 @login_required
 @require_tourney_exists
 def myregistrations(tourney_id, tourney=None):
+    if tourney["info"]["type"] != "txmcvirtual": return redirect("/tournaments")
     data = execute("virtual_tourney_reg", session["id"], tourney_id)[0]["data"]
     students = Coach.query.get(session["id"]).students.order_by(
         Student.grade.asc(), Student.first_name.asc(), 
         Student.last_name.asc()).all()
     return render_template("/txmcvirtual/registrations.html", tourney=tourney, students=students, data=data)
+
+@main.route("/<int:tourney_id>/uploadscores", methods=["GET", "POST"])
+@login_required
+@require_tourney_exists
+def uploadscores(tourney_id, tourney=None):
+    if tourney["info"]["type"] != "txmcvirtual": return redirect("/tournaments")
+    if request.method == "GET":
+        if not session["admin"] and not (getDateTime(str(tourney["date"]) + "T07:00") <= current_time()):
+            return redirect("/tournaments")
+        data = execute("virtual_tourney_scores", session["id"], tourney_id)[0]["data"]
+        students = Coach.query.get(session["id"]).students.join(TourneyStudent).filter_by(tourney_id=tourney_id).order_by(
+            Student.grade.asc(), Student.first_name.asc(), 
+            Student.last_name.asc()).all()
+        return render_template("/txmcvirtual/uploadscores.html", tourney=tourney, students=students, data=data)
+    elif request.method == "POST":
+        if not session["admin"]:
+            if current_time() < getDateTime(str(tourney["date"]) + "T07:00"): return failJSON()
+            elif current_time() > getDateTime(str(tourney["date"]) + "T17:00"):
+                return failJSON("The deadline to submit scores has passed. Please email me your score if you would like it to be included.")
+        data = parseRequestForm()
+        if "scores" not in data: return failJSON("No scores have been submitted.")
+        data = data["scores"]
+        stids = [s.id for s in Coach.query.get(session["id"]).students.all()]
+        for tsid, score in data.items():
+            ts = TourneyStudent.query.get(tsid)
+            if not ts or not ts.taking_test or ts.student_id not in stids:
+                return failJSON("Could not find a registration for a student")
+            ts.score = score
+        db.session.commit()
+        return successJSON("Your scores have been submitted. Refresh the page to ensure they have been saved.", redirect=request.url)
 
 def finishRegistration(data):
     coach_id = data["coach_id"]
