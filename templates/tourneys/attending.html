@@ -55,7 +55,7 @@
                         </thead>
                         <tbody style="font-size: .9em;">
                             {% for row in data %}
-                                {% if sl in row.data %}
+                                {% if row.data and sl in row.data %}
                                     <tr>
                                         <td></td>
                                         <td>{{ row.school_name }}</td>
