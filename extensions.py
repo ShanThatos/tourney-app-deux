@@ -69,7 +69,7 @@ def parseRequestForm(required=[]):
     for key in form:
         val = form[key]
         val = int(val) if val.isnumeric() else val
-        if key not in required and not val: 
+        if "__all__" not in required and key not in required and not val: 
             continue
         val = val == "true" if val in ["true", "false"] else val
         allKeys = [x for x in re.split("[\\[\\]]+", key) if x]

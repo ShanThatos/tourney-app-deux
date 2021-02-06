@@ -32,7 +32,7 @@
                                                 <input type="number" name="scores[{{ data[student.id][test].id }}]" 
                                                     min="-400"
                                                     max="400"
-                                                    {% if data[student.id][test].score %}
+                                                    {% if data[student.id][test].score is not none %}
                                                         value={{ data[student.id][test].score }}
                                                     {% endif %}
                                                     class="form-control-sm"

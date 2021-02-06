@@ -34,7 +34,8 @@ def uploadscores(tourney_id, tourney=None):
             if current_time() < getDateTime(str(tourney["date"]) + "T07:00"): return failJSON()
             elif current_time() > getDateTime(str(tourney["date"]) + "T17:00"):
                 return failJSON("The deadline to submit scores has passed. Please email me your score if you would like it to be included.")
-        data = parseRequestForm()
+        data = parseRequestForm(required=["__all__"])
+        print(data)
         if "scores" not in data: return failJSON("No scores have been submitted.")
         data = data["scores"]
         stids = [s.id for s in Coach.query.get(session["id"]).students.all()]
@@ -42,7 +43,7 @@ def uploadscores(tourney_id, tourney=None):
             ts = TourneyStudent.query.get(tsid)
             if not ts or not ts.taking_test or ts.student_id not in stids:
                 return failJSON("Could not find a registration for a student")
-            ts.score = score
+            ts.score = None if score == "" else score
         db.session.commit()
         return successJSON("Your scores have been submitted. Refresh the page to ensure they have been saved.", redirect=request.url)
 
