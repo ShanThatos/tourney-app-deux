@@ -8,6 +8,9 @@
         {% if request.url.endswith("/vtinstructions") %}
             <h4>This page will be available shortly</h4>
             <h4>Please use the instructions included in the email</h4>
+        {% elif request.url.endswith("/contact") %}
+            <h4>This page will be available shortly</h4>
+            <h4>Please contact me through email: texasmathcontests@gmail.com</h4>
         {% endif %}
     </div>
 {% endblock %}
