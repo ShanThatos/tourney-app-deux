@@ -79,4 +79,5 @@ SELECT *, (s.first_name || ' ' || s.last_name) AS name,
 		AND ts.tourney_id = %s
 		AND s.grade = %s
 		AND ts.test = %s
+		AND ts.score IS NOT NULL
 	ORDER BY score DESC, tie ASC;
