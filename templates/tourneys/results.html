@@ -31,7 +31,7 @@
                     <div class="bg-white p-2">
                         <select class="select3" name="resultstype">
                             {% for grade in range(tourney.min_grade, tourney.max_grade+1) %}
-                                <optgroup label="{{ ext.ordinal(grade) }} Grade:">
+                                <optgroup label="{{ ext.ordinal(grade) }} Grade">
                                     {% if tourney.info.results.individual %}
                                         {% for test in ['NS', 'CA', 'GM', 'GS'] %}
                                             <option value="I-{{ grade }}-{{ test }}">
@@ -42,7 +42,7 @@
                                 </optgroup>
                                 {% if (grade == 5 or grade == 8) and tourney.info.results.schoollevel %}
                                     {% set sl = "Elementary" if grade == 5 else "Middle School" %}
-                                    <optgroup label="All {{ sl }}:">
+                                    <optgroup label="All {{ sl }}">
                                         {% for test in ['NS', 'CA', 'GM', 'GS'] %}
                                             <option value="I-{{ sl[0] }}-{{ test }}">
                                                 {{ sl }} {{ ext.testName[test] }}
@@ -53,7 +53,7 @@
                             {% endfor %}
                             {% if tourney.info.results.eventsweepstakes or tourney.info.results.overallsweepstakes %}
                                 {% if tourney.min_grade <= 5 %}
-                                    <optgroup label="Elementary Sweepstakes:">
+                                    <optgroup label="Elementary Sweepstakes">
                                         {% if tourney.info.results.eventsweepstakes %}
                                             {% for test in ['NS', 'CA', 'GM', 'GS'] %}
                                                 <option value="S-E-{{ test }}">
@@ -67,7 +67,7 @@
                                     </optgroup>
                                 {% endif %}
                                 {% if tourney.max_grade >= 6 %}
-                                    <optgroup label="Middle School Sweepstakes:">
+                                    <optgroup label="Middle School Sweepstakes">
                                         {% if tourney.info.results.eventsweepstakes %}
                                             {% for test in ['NS', 'CA', 'GM', 'GS'] %}
                                                 <option value="S-M-{{ test }}">
@@ -83,6 +83,12 @@
                             {% endif %}
                         </select>
                         <style>
+                            li.select2-results__option--selectable::before {
+                                content: "- ";
+                            }
+                            li.select2-results__option--selectable {
+                                padding-left: 10px;
+                            }
                             .select2-results__option--group {
                                 overflow: hidden;
                             }
@@ -93,6 +99,15 @@
                             .select2-results__options--nested.vis {
                                 max-height: 300px;
                             }
+                            strong.select2-results__group::before {
+                                content: "➤";
+                                margin-right: 5px;
+                                display: inline-block;
+                                transition: transform .5s ease-in-out;
+                            }
+                            strong.select2-results__group.vis::before {
+                                transform: rotate(90deg);
+                            }
                             strong.select2-results__group:hover {
                                 background-color: lightblue;
                                 cursor: pointer;
@@ -100,7 +115,7 @@
                             strong.select2-results__group:active {
                                 background-color: rgb(77, 77, 255);
                             }
-                            .transition-none {
+                            .transition-none, .transition-none::before {
                                 transition: none !important;
                             }
                         </style>
@@ -111,11 +126,16 @@
                                     if (v) {
                                         $(".select2-results__options--nested").addClass("transition-none");
                                         $(".select2-results__options--nested").addClass("vis");
+                                        $(".select2-results__options--nested").prev("strong.select2-results__group").addClass("transition-none");
+                                        $(".select2-results__options--nested").prev("strong.select2-results__group").addClass("vis");
                                         setTimeout(() => {
                                             $(".select2-results__options--nested").removeClass("transition-none");
+                                            $(".select2-results__options--nested").prev("strong.select2-results__group").removeClass("transition-none");
                                         }, 10);
-                                    } else
+                                    } else {
                                         $(".select2-results__options--nested").removeClass("vis");
+                                        $(".select2-results__options--nested").prev("strong.select2-results__group").removeClass("vis");
+                                    }
                                 }
                                 var currentQuery = "";
                                 $("select.select3").select2()
@@ -132,6 +152,7 @@
                                 });
                                 $("body").on("click", "strong.select2-results__group", (e) => {
                                     $(e.currentTarget).next("ul").toggleClass("vis");
+                                    $(e.currentTarget).toggleClass("vis", $(e.currentTarget).next("ul").hasClass("vis"));
                                 });
                             });
                         </script>
