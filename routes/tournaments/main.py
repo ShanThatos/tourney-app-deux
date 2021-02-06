@@ -20,7 +20,7 @@ individual_grade_test = resultsMacros.individual_grade_test
 @require_tourney_exists
 @require_form_keys(["resultstype"])
 def results(tourney_id, tourney=None, formData=None):
-    if not has_tourney_access(tourney_id) and current_time() < getDateTime(tourney.info["results_open"]):
+    if not has_tourney_access(tourney_id) and current_time() < getDateTime(tourney["info"]["results_open"]):
         return redirect("/tournaments")
     if request.method == "GET":
         return render_template("/tourneys/results.html", tourney=tourney)
