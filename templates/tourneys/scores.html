@@ -1,0 +1,50 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Scores {% endblock %}
+
+{% block head %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/2.3.0/list.min.js"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="fullspace text-center pt-3">
+        <h1>{{ tourney.info.name }} Scores</h1>
+        <div class="container-md">
+            <div class="container">
+                <table class="table table-sm bg-white table-bordered table-striped css-serial border border-dark border-3">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>School</th>
+                            <th>Coach</th>
+                            <th>Name</th>
+                            <th>Grade</th>
+                            <th>Number Sense</th>
+                            <th>Calculator</th>
+                            <th>General Math</th>
+                            <th>Science</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                            <tr>
+                                <td></td>
+                                <td>{{ row.school_name }}</td>
+                                <td>{{ row.coach_name }}</td>
+                                <td>{{ row.first_name ~ " " ~ row.last_name }}</td>
+                                <td>{{ ext.ordinal(row.grade) }}</td>
+                                {% for test in ["NS", "CA", "GM", "GS"] %}
+                                    {% if test in row.ts %}
+                                        <td>{{ "" if row.ts[test].score is none else row.ts[test].score }}</td>
+                                    {% else %}
+                                        <td>-</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

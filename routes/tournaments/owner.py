@@ -85,3 +85,10 @@ def tourneyAttending(tourney_id, formData=None):
         tc.comments = formData[2]
         db.session.commit()
         return successJSON("Your changes have been saved")
+
+@main.route("/<int:tourney_id>/allscores")
+@require_tourney_access
+def tourneyScores(tourney_id):
+    tourney = Tourney.query.get(tourney_id)
+    data = execute("virtual_tourney_all_scores", tourney_id)
+    return render_template("/tourneys/scores.html", tourney=tourney, data=data)
