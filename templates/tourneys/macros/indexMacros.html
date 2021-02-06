@@ -19,13 +19,13 @@
                     {% if ext.current_time() <= ext.getDateTime(tourney.close_date) %}
                         <a href="/txmcvirtual/register?{{ tourney.id }}=true" class="btn btn-sm btn-primary m-1">Register</a>
                     {% endif %}
-                    {% if tourney.info.training_session_link and tourney.id in coachData and coachData[tourney.id].paid %}
-                        <a href="{{ tourney.info.training_session_link }}" class="btn btn-sm btn-primary m-1"><small>Training Session</small></a>
+                    {% if tourney.info.training_session_link and coachData and tourney.id in coachData and coachData[tourney.id].paid %}
+                        <a href="{{ tourney.info.training_session_link }}" target="_blank" class="btn btn-sm btn-primary m-1"><small>Training Session</small></a>
                     {% else %}
                         <a class="btn btn-sm btn-primary m-1 disabled"><small>Training Session</small></a>
                     {% endif %}
-                    {% if tourney.info.tests_link and ext.getDateTime(tourney.date|string + "T07:00") <= ext.current_time() and tourney.id in coachData and coachData[tourney.id].paid %}
-                        <a href="{{ tourney.info.tests_link }}" class="btn btn-sm btn-primary m-1"><small>All Tests</small></a>
+                    {% if tourney.info.tests_link and ext.getDateTime(tourney.date|string + "T07:00") <= ext.current_time() and coachData and tourney.id in coachData and coachData[tourney.id].paid %}
+                        <a href="{{ tourney.info.tests_link }}" target="_blank" class="btn btn-sm btn-primary m-1"><small>All Tests</small></a>
                     {% else %}
                         <a class="btn btn-sm btn-primary m-1 disabled"><small>All Tests</small></a>
                     {% endif %}
