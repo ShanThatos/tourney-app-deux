@@ -1,0 +1,34 @@
+{% macro thead(columns) -%}
+    <thead>
+        <tr>
+            {% for col in columns -%}
+                <th>{{ col }}</th>
+            {% endfor -%}
+        </tr>
+    </thead>
+{% endmacro -%}
+
+{% macro results(data, columns) -%}
+    <tbody>
+        {% for row in data -%}
+            <tr>
+                <td></td>
+                {% for col in columns -%}
+                    {% if col == "grade" %}
+                        <td>{{ ext.ordinal(row[col]) }}</td>
+                    {% else %}
+                        <td>{{ row[col] }}</td>
+                    {% endif %}
+                {% endfor -%}
+            </tr>
+        {% endfor -%}
+    </tbody>
+{% endmacro -%}
+
+{% macro individual_grade_test(tourney_id, grade, test, ext=None) %}
+    <h2>{{ ext.ordinal(grade) }} Grade {{ ext.testName[test] }} Results</h2>
+    <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
+        {{ thead(["#", "School", "Student", "Score"]) }}
+        {{ results(ext.execute("results_individual_grade_test", tourney_id, grade, test), ["school_name", "name", "score_display"]) }}
+    </table>
+{% endmacro %}

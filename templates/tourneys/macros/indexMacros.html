@@ -30,7 +30,7 @@
                         <a class="btn btn-sm btn-primary m-1 disabled"><small>All Tests</small></a>
                     {% endif %}
                     {% if ext.current_time() >= ext.getDateTime(tourney.info.results_open) %}
-                        <a href="" class="btn btn-sm btn-primary m-1">Results</a>
+                        <a href="/tournaments/{{ tourney.id }}/results" class="btn btn-sm btn-primary m-1">Results</a>
                     {% else %}
                         <a href="" class="btn btn-sm btn-primary m-1 disabled">Results</a>
                     {% endif %}

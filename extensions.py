@@ -21,6 +21,8 @@ STRIPE_ENDPOINT_SECRET = os.environ.get("STRIPE_ENDPOINT_SECRET")
 
 PROXY = os.environ.get("PROXY")
 
+testName = {"NS": "Number Sense", "CA": "Calculator", "GM": "General Math", "GS": "Science"}
+
 db = SQLAlchemy()
 
 scripts = {}

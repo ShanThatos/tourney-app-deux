@@ -47,3 +47,25 @@ SELECT *,
 	FROM tourneycoach tc, coaches c
 	WHERE tc.coach_id = c.id AND tc.tourney_id = %s
 	ORDER BY school_name, name;
+results_individual_grade_test
+SELECT *, (s.first_name || ' ' || s.last_name) AS name,
+	(CASE WHEN s.school_id IS NOT NULL THEN
+		(SELECT sh.name FROM schools sh WHERE s.school_id = sh.id)
+		ELSE (SELECT c.school_name FROM coaches c WHERE s.coach_id = c.id)
+	END) AS school_name, 
+	(CASE WHEN EXISTS(
+			SELECT * FROM tourneystudent ts2, students s2
+				WHERE ts2.student_id = s2.id
+					AND ts2.tourney_id = ts.tourney_id
+					AND s2.grade = s.grade
+					AND ts2.test = ts.test
+					AND ts2.score = ts.score
+					AND s2.id <> s.id
+		) THEN ts.score::TEXT || ts.tie
+		ELSE ts.score::TEXT END) AS score_display
+	FROM tourneystudent ts, students s
+	WHERE ts.student_id = s.id
+		AND ts.tourney_id = %s
+		AND s.grade = %s
+		AND ts.test = %s
+	ORDER BY score DESC, tie ASC;
