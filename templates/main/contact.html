@@ -1,0 +1,35 @@
+{% extends "main/layout.html" %}
+
+{% block title %} Contact {% endblock %}
+
+{% block main %}
+    <style>
+        .peachcard {
+            min-height: 300px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 249, 238), rgb(255, 235, 202));
+            margin-top: 15px;
+            margin-bottom: 100px;
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="max-width: 500px; min-width: fit-content;">
+            <div class="rounded peachcard p-4 d-flex flex-column">
+                <h3 class="specialunderline">Contact</h3>
+                <form id="contactForm" class="flex-grow-1 p-2 d-flex flex-column" enhance>
+                    <div class="text-start">
+                        <label class="form-label mb-0">To: </label>
+                        <input name="to" type="email" class="form-control mb-2" value="texasmathcontests@gmail.com" disabled>
+                        <label class="form-label mb-0">From: </label>
+                        <input name="from" type="email" class="form-control mb-2" placeholder="Email">
+                        <label class="form-label mb-0">Message: </label>
+                        <textarea name="message" form="contactForm" cols="30" rows="5" class="form-control" placeholder="Message" required></textarea>
+                    </div>
+                    <div class="flex-grow-1 text-center pt-2">
+                        <button class="mt-auto btn btn-primary fw-bold" type="submit">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

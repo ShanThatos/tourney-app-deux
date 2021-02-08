@@ -108,6 +108,17 @@ def students(formData=None):
     db.session.commit()
     return successJSON()
 
+@main.route("/contact", methods=["GET", "POST"])
+@require_form_keys(["message"])
+def contact(formData=None):
+    if request.method == "GET":
+        return render_template("/main/contact.html")
+    email = request.form.get("from", "Anonymous")
+    sendEmail(recipient="texasmathcontests@gmail.com", 
+        subject=f"Message - {email}", 
+        message=f"Message from {email}\n\n{formData[0]}")
+    return successJSON("Your message has been sent", redirect="/")
+
 from .txmcvirtual.account import finishRegistration
 
 @main.route("/webhook", methods=["POST"])
