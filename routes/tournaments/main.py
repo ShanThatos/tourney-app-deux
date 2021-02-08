@@ -16,6 +16,7 @@ def tourneyIndex():
 
 resultsMacros = jinja2.Template(open("templates/tourneys/macros/resultsMacros.html").read()).module
 individual_grade_test = resultsMacros.individual_grade_test
+individual_level_test = resultsMacros.individual_level_test
 @main.route("/<int:tourney_id>/results", methods=["GET", "POST"])
 @require_tourney_exists
 @require_form_keys(["resultstype"])
@@ -28,4 +29,6 @@ def results(tourney_id, tourney=None, formData=None):
         type, grade, test = formData[0].split("-")
         if type == "I" and grade.isnumeric() and test in ["NS", "CA", "GM", "GS"]:
             return successJSON(html=individual_grade_test(tourney_id, int(grade), test, ext=extensions))
+        if type == "I" and grade in "EM" and test in ["NS", "CA", "GM", "GS"]:
+            return successJSON(html=individual_level_test(tourney_id, grade, test, ext=extensions))
         return successJSON(html="<h2>Results Not Available Yet</h2>")

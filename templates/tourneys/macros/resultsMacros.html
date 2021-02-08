@@ -8,7 +8,7 @@
     </thead>
 {% endmacro -%}
 
-{% macro results(data, columns) -%}
+{% macro results(data, columns, ext=None) -%}
     <tbody>
         {% for row in data -%}
             <tr>
@@ -30,5 +30,13 @@
     <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
         {{ thead(["#", "School", "Student", "Score"]) }}
         {{ results(ext.execute("results_individual_grade_test", tourney_id, grade, test), ["school_name", "name", "score_display"]) }}
+    </table>
+{% endmacro %}
+
+{% macro individual_level_test(tourney_id, grade, test, ext=None) %}
+    <h2>{{ "Elementary" if grade == "E" else "Middle School" }} {{ ext.testName[test] }} Results</h2>
+    <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
+        {{ thead(["#", "School", "Student", "Grade", "Score"]) }}
+        {{ results(ext.execute("results_individual_level_test", tourney_id, grade, grade, test), ["school_name", "name", "grade", "score_display"], ext=ext) }}
     </table>
 {% endmacro %}

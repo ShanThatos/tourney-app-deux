@@ -101,6 +101,7 @@ def _normalize(arg):
     return f"'{arg}'"
 def execute(scriptName, *args, **kwargs):
     script = scripts[scriptName].strip().removesuffix(";")
+    script = re.sub(r"%s", r" %s ", script)
     tokens = re.split(" +", script)
     ci = 0
     for i in range(len(tokens)):
