@@ -3,18 +3,13 @@
 {% block title %} Results {% endblock %}
 
 {% block main %}
-    <style>
-        .select2-results {
-            font-size: .9em;
-        }
-    </style>
     <script>
         function showResults(res) {
             $("#results").html(res.html);
             // console.log(res.html);
         }
     </script>
-    <div class="fullspace text-center pt-4">
+    <div class="text-center pt-4">
         <div class="container-md">
             <div class="container">
                 <h1>{{ tourney.info.name }}</h1>
@@ -83,6 +78,12 @@
                             {% endif %}
                         </select>
                         <style>
+                            .select2-results {
+                                font-size: .9em;
+                            }
+                            .select2-container--default .select2-results>.select2-results__options {
+                                max-height: 300px !important;
+                            }
                             li.select2-results__option--selectable::before {
                                 content: "- ";
                             }
@@ -167,3 +168,5 @@
     </div>
 {% endblock %}
 
+{% block footer %}
+{% endblock %}
