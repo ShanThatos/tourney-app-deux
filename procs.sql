@@ -106,3 +106,37 @@ SELECT *, (s.first_name || ' ' || s.last_name) AS name,
 		AND ts.test = %s
 		AND ts.score IS NOT NULL
 	ORDER BY score DESC, tie ASC;
+results_sweepstakes_test
+SELECT team_name, SUM(score) AS score, JSON_AGG(t ORDER BY score DESC, grade) AS score_details
+	FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY team_id ORDER BY score DESC) AS tr
+		FROM (SELECT s.*, ts.score, sh.id AS team_id, sh.name AS team_name, 
+			ROW_NUMBER() OVER (PARTITION BY sh.id, s.grade ORDER BY ts.score DESC) tgr
+			FROM tourneystudent ts, students s, schools sh
+			WHERE ts.student_id = s.id 
+				AND ts.score IS NOT NULL AND ts.score > 0
+				AND s.school_id = sh.id
+				AND ts.tourney_id = :tid
+				AND ts.test = :tn
+				AND ((s.grade BETWEEN 0 AND 5 AND 'E' = :sl )
+					OR (s.grade BETWEEN 6 AND 8 AND 'M' = :sl ))) t
+		WHERE tgr <= (CASE WHEN grade IN (5, 8) THEN 3 ELSE 4 END)) t
+	WHERE tr <= 4
+	GROUP BY (team_id, team_name)
+	UNION ALL
+	SELECT team_name, SUM(score) AS score, JSON_AGG(t ORDER BY score DESC, grade) AS score_details
+		FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY team_id ORDER BY score DESC) AS tr
+			FROM (SELECT s.*, ts.score, c.id AS team_id, c.school_name AS team_name, 
+				ROW_NUMBER() OVER (PARTITION BY c.id, s.grade ORDER BY ts.score DESC) tgr
+				FROM tourneystudent ts, students s, coaches c
+				WHERE ts.student_id = s.id 
+					AND s.coach_id = c.id
+					AND ts.score IS NOT NULL AND ts.score > 0
+					AND s.school_id IS NULL
+					AND ts.tourney_id = :tid
+					AND ts.test = :tn
+					AND ((s.grade BETWEEN 0 AND 5 AND 'E' = :sl )
+						OR (s.grade BETWEEN 6 AND 8 AND 'M' = :sl ))) t
+			WHERE tgr <= (CASE WHEN grade IN (5, 8) THEN 3 ELSE 4 END)) t
+		WHERE tr <= 4
+		GROUP BY (team_id, team_name)
+	ORDER BY score DESC;

@@ -113,6 +113,15 @@ def execute(scriptName, *args, **kwargs):
             tokens[i] = _normalize(kwargs[match.group(1)])
     return dictify(db.engine.execute(" ".join(tokens) + ";"))
 
+def fill_score_details(display, data):
+    ret = []
+    for row in data:
+        ret.append(display)
+        for key, value in row.items():
+            nv = ordinal(value) if key == "grade" else value
+            ret[-1] = ret[-1].replace(f"[{key}]", str(nv))
+    return "<br>".join(ret)
+
 def require_form_keys(keys, method="POST"):
     def decorator(f):
         @wraps(f)

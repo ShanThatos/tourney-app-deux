@@ -8,7 +8,7 @@
     </thead>
 {% endmacro -%}
 
-{% macro results(data, columns, ext=None) -%}
+{% macro results(data, columns, ext=None, details=None) -%}
     <tbody>
         {% for row in data -%}
             <tr>
@@ -16,6 +16,16 @@
                 {% for col in columns -%}
                     {% if col == "grade" %}
                         <td>{{ ext.ordinal(row[col]) }}</td>
+                    {% elif col == "score_details" and details is not none %}
+                        <td>
+                            <a tabindex="0" class="btn-link p-0" role="button" 
+                                data-bs-html="true" data-bs-placement="left"
+                                data-bs-toggle="popover" data-bs-trigger="hover"
+                                title="Score Details" 
+                                data-bs-content="{{ ext.fill_score_details(details, row[col]) }}">
+                                Score Details
+                            </a>
+                        </td>
                     {% else %}
                         <td>{{ row[col] }}</td>
                     {% endif %}
@@ -38,5 +48,15 @@
     <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
         {{ thead(["#", "School", "Student", "Grade", "Score"]) }}
         {{ results(ext.execute("results_individual_level_test", tourney_id, grade, grade, test), ["school_name", "name", "grade", "score_display"], ext=ext) }}
+    </table>
+{% endmacro %}
+
+{% macro sweepstakes_test(tourney_id, grade, test, ext=None) %}
+    <h2>{{ "Elementary" if grade == "E" else "Middle School" }} {{ ext.testName[test] }} Sweepstakes Results</h2>
+    <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
+        {{ thead(["#", "School", "Score", "-"]) }}
+        {{ results(ext.execute("results_sweepstakes_test", tid=tourney_id, sl=grade, tn=test), 
+            ["team_name", "score", "score_details"], ext=ext, 
+            details="<b>[first_name] [last_name] - [grade] Grade:</b> [score]") }}
     </table>
 {% endmacro %}

@@ -6,7 +6,7 @@
     <script>
         function showResults(res) {
             $("#results").html(res.html);
-            // console.log(res.html);
+            $('[data-bs-toggle="popover"]').popover();
         }
     </script>
     <div class="text-center pt-4">
@@ -26,56 +26,56 @@
                     <div class="bg-white p-2">
                         <select class="select3" name="resultstype">
                             {% for grade in range(tourney.min_grade, tourney.max_grade+1) %}
-                                <optgroup label="{{ ext.ordinal(grade) }} Grade">
-                                    {% if tourney.info.results.individual %}
-                                        {% for test in ['NS', 'CA', 'GM', 'GS'] %}
-                                            <option value="I-{{ grade }}-{{ test }}">
-                                                {{ ext.ordinal(grade) }} Grade {{ ext.testName[test] }}
+                                {% if tourney.info.results.individual or tourney.info.results.topgungrades %}
+                                    <optgroup label="{{ ext.ordinal(grade) }} Grade">
+                                        {% if tourney.info.results.individual %}
+                                            {% for test in ['NS', 'CA', 'GM', 'GS'] %}
+                                                <option value="I-{{ grade }}-{{ test }}">
+                                                    {{ ext.ordinal(grade) }} Grade {{ ext.testName[test] }}
+                                                </option>
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% if tourney.info.results.topgungrades %}
+                                            <option value="I-{{ grade }}-O">
+                                                {{ ext.ordinal(grade) }} Grade Top Gun
                                             </option>
-                                        {% endfor %}
-                                    {% endif %}
-                                </optgroup>
-                                {% if (grade == 5 or grade == 8) and tourney.info.results.schoollevel %}
-                                    {% set sl = "Elementary" if grade == 5 else "Middle School" %}
-                                    <optgroup label="All {{ sl }}">
-                                        {% for test in ['NS', 'CA', 'GM', 'GS'] %}
-                                            <option value="I-{{ sl[0] }}-{{ test }}">
-                                                {{ sl }} {{ ext.testName[test] }}
-                                            </option>
-                                        {% endfor %}
+                                        {% endif %}
                                     </optgroup>
+                                {% endif %}
+                                {% if grade == 5 or grade == 8 %}
+                                    {% set sl = "Elementary" if grade == 5 else "Middle School" %}
+                                    {% if tourney.info.results.schoollevel or tourney.info.results.topgunem %}
+                                        <optgroup label="All {{ sl }}">
+                                            {% if tourney.info.results.schoollevel %}
+                                                {% for test in ['NS', 'CA', 'GM', 'GS'] %}
+                                                    <option value="I-{{ sl[0] }}-{{ test }}">
+                                                        {{ sl }} {{ ext.testName[test] }}
+                                                    </option>
+                                                {% endfor %}
+                                            {% endif %}
+                                            {% if tourney.info.results.topgunem %}
+                                                <option value="I-{{ sl[0] }}-O">
+                                                    {{ sl }} Top Gun
+                                                </option>
+                                            {% endif %}
+                                        </optgroup>
+                                    {% endif %}
+                                    {% if tourney.info.results.eventsweepstakes or tourney.info.results.overallsweepstakes %}
+                                        <optgroup label="{{ sl }} Sweepstakes">
+                                            {% if tourney.info.results.eventsweepstakes %}
+                                                {% for test in ['NS', 'CA', 'GM', 'GS'] %}
+                                                    <option value="S-{{ sl[0] }}-{{ test }}">
+                                                        {{ sl }} {{ ext.testName[test] }} Sweepstakes
+                                                    </option>
+                                                {% endfor %}
+                                            {% endif %}
+                                            {% if tourney.info.results.overallsweepstakes %}
+                                                <option value="S-{{ sl[0] }}-O">{{ sl }} Overall Sweepstakes</option>
+                                            {% endif %}
+                                        </optgroup>
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
-                            {% if tourney.info.results.eventsweepstakes or tourney.info.results.overallsweepstakes %}
-                                {% if tourney.min_grade <= 5 %}
-                                    <optgroup label="Elementary Sweepstakes">
-                                        {% if tourney.info.results.eventsweepstakes %}
-                                            {% for test in ['NS', 'CA', 'GM', 'GS'] %}
-                                                <option value="S-E-{{ test }}">
-                                                    Elementary {{ ext.testName[test] }} Sweepstakes
-                                                </option>
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% if tourney.info.results.overallsweepstakes %}
-                                            <option value="S-E-O">Elementary Overall Sweepstakes</option>
-                                        {% endif %}
-                                    </optgroup>
-                                {% endif %}
-                                {% if tourney.max_grade >= 6 %}
-                                    <optgroup label="Middle School Sweepstakes">
-                                        {% if tourney.info.results.eventsweepstakes %}
-                                            {% for test in ['NS', 'CA', 'GM', 'GS'] %}
-                                                <option value="S-M-{{ test }}">
-                                                    Middle School {{ ext.testName[test] }} Sweepstakes
-                                                </option>
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% if tourney.info.results.overallsweepstakes %}
-                                            <option value="S-M-O">Middle School Overall Sweepstakes</option>
-                                        {% endif %}
-                                    </optgroup>
-                                {% endif %}
-                            {% endif %}
                         </select>
                         <style>
                             .select2-results {
@@ -160,9 +160,15 @@
                         <button class="btn btn-lg btn-success w-100 mt-2" type="submit">View Results</button>
                     </div>
                 </form>
-                <div class="mt-3" id="results">
-
-                </div>
+                <style>
+                    .popover {
+                        max-width: none;
+                    }
+                    .popover-header, .popover-body {
+                        padding: .5rem .8rem;
+                    }
+                </style>
+                <div class="mt-3" id="results"></div>
             </div>
         </div>
     </div>
