@@ -1,11 +1,3 @@
-tourney_index
-SELECT JSON_AGG(TO_JSON(tourneys) ORDER BY date ASC) AS tourneys, 
-	TRIM(TO_CHAR(date, 'Month')) AS month, 
-	DATE_PART('month', date)::int AS monthnum, 
-	DATE_PART('year', date)::int AS year
-	FROM tourneys
-	GROUP BY month, monthnum, year
-	ORDER BY year, monthnum;
 tourney_index_coach_info
 SELECT JSON_OBJECT_AGG(tourney_id, TO_JSON(tourneycoach)) AS data FROM tourneycoach WHERE coach_id = %s;
 virtual_adv_reg
@@ -140,3 +132,21 @@ SELECT team_name, SUM(score) AS score, JSON_AGG(t ORDER BY score DESC, grade) AS
 		WHERE tr <= 4
 		GROUP BY (team_id, team_name)
 	ORDER BY score DESC;
+results_individual_grade_top_gun
+SELECT *, (s.first_name || ' ' || s.last_name) AS name,
+	(CASE WHEN s.school_id IS NOT NULL THEN
+		(SELECT sh.name FROM schools sh WHERE s.school_id = sh.id)
+		ELSE (SELECT c.school_name FROM coaches c WHERE s.coach_id = c.id)
+	END) AS school_name	
+	FROM students s,
+		(SELECT ts.student_id, 
+			JSONB_AGG(ts ORDER BY ts.test = 'NS' DESC, ts.test = 'CA' DESC, ts.test = 'GM' DESC, ts.test = 'GS' DESC) AS score_details,
+		 	SUM(CASE WHEN ts.test IN ('GM', 'GS') THEN 8 * ts.score / 5 ELSE ts.score END) AS score
+			FROM tourneystudent ts 
+			WHERE ts.tourney_id = %s
+				AND ts.score IS NOT NULL
+				AND ts.score > 0
+			GROUP BY ts.student_id) t
+	WHERE s.id = t.student_id
+		AND s.grade = %s
+	ORDER BY t.score DESC;

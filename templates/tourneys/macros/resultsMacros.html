@@ -60,3 +60,13 @@
             details="<b>[first_name] [last_name] - [grade] Grade:</b> [score]") }}
     </table>
 {% endmacro %}
+
+{% macro individual_grade_top_gun(tourney_id, grade, ext=None) %}
+    <h2>{{ ext.ordinal(grade) }} Grade Top Gun Results</h2>
+    <table class="table table-bordered table-striped table-sm css-serial bg-white shadow border border-dark border-3">
+        {{ thead(["#", "School", "Student", "Score", "-"]) }}
+        {{ results(ext.execute("results_individual_grade_top_gun", tourney_id, grade), 
+            ["school_name", "name", "score", "score_details"], ext=ext, 
+            details="<b>[test]:</b> [score]") }}
+    </table>
+{% endmacro %}

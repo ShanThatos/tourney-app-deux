@@ -53,9 +53,17 @@
                 <h3 class="mb-0 me-2 mt-2">Helpful Links: </h3>
                 <a href="/vtinstructions" target="_blank" class="contentbutton mx-auto mt-2">Virtual Tournament Registration Instructions</a>
                 <a href="/vtschedule" target="_blank" class="contentbutton mx-auto mt-2">Virtual Tournaments Info & Schedule</a>
+                {% if request.args.get("past") %}
+                    <a href="/tournaments/" class="contentbutton mx-auto mt-2">View Upcoming Tournaments</a>
+                {% else %}
+                    <a href="/tournaments/?past=1" class="contentbutton mx-auto mt-2">View Past Tournaments</a>
+                {% endif %}
             </div>
         </div>
         <div class="container-md pt-4" style="max-width: 1100px;">
+            {% if request.args.get("past") %}
+                <h2 class="text-center mb-3">Past Tournaments</h2>
+            {% endif %}
             {% for tourney3 in ext.groupsof(3, data) %}
                 <div class="row">
                     {% for tourney in tourney3 %}
