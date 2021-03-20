@@ -86,6 +86,11 @@ def tourneyAttending(tourney_id, formData=None):
         db.session.commit()
         return successJSON("Your changes have been saved")
 
+@main.route("/<int:tourney_id>/attending/emails")
+@require_tourney_access
+def tourneyAttendingEmails(tourney_id):
+    return ";<br>".join([c.email for c in Tourney.query.get(tourney_id).coaches.all()])
+
 @main.route("/<int:tourney_id>/allscores")
 @require_tourney_access
 def tourneyScores(tourney_id):
