@@ -63,3 +63,8 @@ def accounts(formData=None):
         session["id"] = int(formData[1])
         session["admin"] = formData[0] == 'true'
         return successJSON(redirect="/")
+
+@main.route("/testgenerator")
+@admin_required
+def testgenerator():
+    return redirect("/virtualtest/allquestions")

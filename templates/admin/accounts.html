@@ -30,14 +30,18 @@
                                 </ul>
                             </td>
                             <td>
-                                <button class="btn btn-info btn-sm"
+                                <button 
+                                    type="button"
+                                    class="btn btn-info btn-sm"
                                     method="POST"
                                     data='{"admin": true, "coach_id": {{ coach.id }}}'
                                     enhance
                                 >
                                     Login As Admin
                                 </button>
-                                <button class="btn btn-info btn-sm"
+                                <button 
+                                    type="button"
+                                    class="btn btn-info btn-sm"
                                     method="POST"
                                     data='{"admin": false, "coach_id": {{ coach.id }}}'
                                     enhance

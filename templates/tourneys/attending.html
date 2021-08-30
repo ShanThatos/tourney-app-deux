@@ -82,7 +82,7 @@
                                                 >{{ row.comments if row.comments else '' }}</textarea>
                                             </td>
                                             <td>
-                                                <button cid="{{ row.coach_id }}" class="btn btn-success btn-sm" onclick="save(this, {{ row.coach_id }})" disabled>
+                                                <button type="button" cid="{{ row.coach_id }}" class="btn btn-success btn-sm" onclick="save(this, {{ row.coach_id }})" disabled>
                                                     <i class="far fa-save"></i>
                                                 </button>
                                             </td>

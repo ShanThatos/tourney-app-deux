@@ -1,0 +1,325 @@
+{% extends "main/layout.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block main %}
+    <style>
+        .peachcard {
+            min-height: 300px;
+            box-shadow: black 0px 0px 5px 1px;
+            background-image: linear-gradient(to bottom right, rgb(255, 255, 255), rgb(240, 240, 240));
+            margin-top: 60px;
+            margin-bottom: 100px;
+        }
+        .monofont {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+        }
+        label {
+            font-size: .9em;
+            font-weight: 600;
+        }
+        .varbutton {
+            border-width: 4px;
+        }
+        .varbutton:hover, .varbutton:focus {
+            border-color: aqua;
+        }
+        .answerline {
+            min-width: 60px;
+            min-height: 36px;
+            border-bottom: solid black 2px;
+            margin-left: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="min-width: fit-content;">
+            <div class="rounded peachcard p-4 d-flex flex-column">
+                <h3 class="specialunderline">Question Info</h3>
+                <form 
+                    id="questionform" 
+                    class="d-flex flex-column"
+                    keepinputs="1"
+                    enhance
+                    >
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Test</label>
+                            <select class="form-control" name="test">
+                                {% for tid, test in [("NS", "Number Sense"), ("GM", "General Math"), ("GS", "Science")] %}
+                                    <option 
+                                        value="{{ tid }}"
+                                        {% if question and question.test == tid %} selected {% endif %}
+                                    >{{ test }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Question Name</label>
+                            {% if question %}
+                                <input type="text" class="form-control monofont" name="questionname" placeholder="Name" value="{{ question.name }}" required>
+                            {% else %}
+                                <input type="text" class="form-control monofont" name="questionname" placeholder="Name" required>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12">
+                            <label class="form-label">Question Display Name</label>
+                            {% if question %}
+                                <input type="text" name="questiondisplayname" class="form-control monofont" placeholder="Display Name" value="{{ question.info.displayname }}" required>
+                            {% else %}
+                                <input type="text" name="questiondisplayname" class="form-control monofont" placeholder="Display Name" required>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Variables</label>
+                            <div>
+                                <table class="monofont w-100">
+                                    <tbody id="variables">
+                                        {% if question %}
+                                            {% for var in question.info.vars %}
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" class="form-control form-control-sm monofont text-end ms-auto" name="varname[{{ loop.index0 }}]" value="{{ var.name }}" placeholder="a">
+                                                    </td>
+                                                    <td style="display: grid; place-items: center; width: 10%;">
+                                                        <span class="mx-2">=</span>
+                                                    </td>
+                                                    <td style="width: 75%;">
+                                                        <input type="text" class="form-control form-control-sm monofont text-start me-auto" name="varval[{{ loop.index0 }}]" value="{{ var.value }}" placeholder="rng.randint(0, 100)">
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm monofont text-end ms-auto" name="varname[0]" value="a" placeholder="a">
+                                                </td>
+                                                <td style="display: grid; place-items: center; width: 10%;">
+                                                    <span class="mx-2">=</span>
+                                                </td>
+                                                <td style="width: 75%;">
+                                                    <input type="text" class="form-control form-control-sm monofont text-start me-auto" name="varval[0]" value="rng.randint(0, 100)" placeholder="rng.randint(0, 100)">
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button type="button" onclick="addVar();" class="btn btn-light rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">+</div>
+                                    </button>
+                                    <button type="button" onclick="removeVar();" class="btn btn-dark rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">-</div>
+                                    </button>
+                                </div>
+                                <script>
+                                    function addVar() {
+                                        var numVars = $("#variables tr").length;
+                                        $("#variables").append($("#variablesample").html().replaceAll("__index__", numVars + ""));
+                                    }
+                                    function removeVar() {
+                                        $("#variables tr:last").remove();
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Question Statement</label>
+                            <div id="statements">
+                                {% if question %}
+                                    {% for statement in question.info.statements %}
+                                        <textarea name="statement[{{ loop.index0 }}]" cols="30" rows="1" form="questionform" class="form-control form-control-sm monofont mb-2" placeholder="Statement" required>{{ statement }}</textarea>
+                                    {% endfor %}
+                                {% else %}
+                                    <textarea name="statement[0]" cols="30" rows="1" form="questionform" class="form-control form-control-sm monofont mb-2" placeholder="Statement" required></textarea>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <button type="button" onclick="addStatement();" class="btn btn-light rounded-circle shadow p-2 m-2 varbutton">
+                                    <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">+</div>
+                                </button>
+                                <button type="button" onclick="removeStatement();" class="btn btn-dark rounded-circle shadow p-2 m-2 varbutton">
+                                    <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">-</div>
+                                </button>
+                            </div>
+                            <script>
+                                function addStatement() {
+                                    var numVars = $("#statements textarea").length;
+                                    $("#statements").append($("#statementsample").html().replaceAll("__index__", numVars + "").replaceAll("__form__", "questionform"));
+                                }
+                                function removeStatement() {
+                                    $("#statements textarea:last").remove();
+                                }
+                            </script>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Answer</label>
+                            <textarea name="answer" cols="30" rows="1" form="questionform" class="form-control form-control-sm monofont mb-2" placeholder="Answer" required>{% if question %}{{ question.info.answer }}{% endif %}</textarea>
+                            <label class="form-label">Answer Choices</label>
+                            <div class="text-start">
+                                <div id="answerchoices">
+                                    {% if question %}
+                                        {% for choice in question.info.choices %}
+                                            <input type="text" class="form-control form-control-sm monofont mb-1" name="choices[{{ loop.index0 }}]" value="{{ choice }}">
+                                        {% endfor %}
+                                    {% else %}
+                                        <input type="text" class="form-control form-control-sm monofont mb-1" name="choices[0]">
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button type="button" onclick="addChoice();" class="btn btn-light rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">+</div>
+                                    </button>
+                                    <button type="button" onclick="removeChoice();" class="btn btn-dark rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">-</div>
+                                    </button>
+                                </div>
+                                <script>
+                                    function addChoice() {
+                                        var numVars = $("#answerchoices input").length;
+                                        $("#answerchoices").append($("#choicesample").html().replaceAll("__index__", numVars + ""));
+                                    }
+                                    function removeChoice() {
+                                        $("#answerchoices input:last").remove();
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Modifiers</label>
+                            <div class="text-start">
+                                <div id="modifiers">
+                                    {% if question %}
+                                        {% for modifier in question.info.modifiers %}
+                                            <input type="text" class="form-control form-control-sm monofont mb-1" name="modifiers[{{ loop.index0 }}]" value="{{ modifier }}">
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for mod in ["inputtype ", "locations ", "latexify?", "restriction ", "notafter ", "groupwith ", "reference ", "units ", "decimalcontext "] %}
+                                            <input type="text" class="form-control form-control-sm monofont mb-1" name="modifiers[{{ loop.index0 }}]" value="{{ mod }}">
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button type="button" onclick="addModifer();" class="btn btn-light rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">+</div>
+                                    </button>
+                                    <button type="button" onclick="removeModifer();" class="btn btn-dark rounded-circle shadow p-2 m-2 varbutton">
+                                        <div style="font-size: 20px; font-weight: bold; width: 20px; height: 20px; line-height: 15px;">-</div>
+                                    </button>
+                                </div>
+                                <script>
+                                    function addModifer() {
+                                        var numVars = $("#modifiers input").length;
+                                        $("#modifiers").append($("#modifierssample").html().replaceAll("__index__", numVars + ""));
+                                    }
+                                    function removeModifer() {
+                                        $("#modifiers input:last").remove();
+                                    }
+                                    function setModifier(text) {
+                                        $("#modifiers input:last").val(text);
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <a href="/virtualtest/allquestions" class="btn btn-primary px-5 mx-3">All Questions</a>
+                        <button 
+                            type="button" 
+                            id="previewBtn" 
+                            class="btn btn-primary mx-3 px-5"
+                            >
+                            Load Preview
+                        </button>
+                        <button type="submit" class="btn btn-success mx-3 px-5">Submit</button>
+                    </div>
+                    <div 
+                        class="overflow-auto mx-3 border border-dark border-3 rounded bg-white p-3 mt-3" 
+                        style="font-family: 'Times New Roman', Times, serif; font-size: 24px;">
+                        <h5>Preview</h5>
+                        <div id="questionPreview">
+
+                        </div>
+                    </div>
+                    <script>
+                        function showQuestionPreview(res) {
+                            const preview = $("#questionPreview")
+                            preview.html(res.html);
+                            MathJax.Hub.Queue(["Typeset", MathJax.Hub, preview[0]]);
+                        }
+                        $(document).ready(() => {
+                            $("#previewBtn").on("click", () => {
+                                sendAjax("/virtualtest/previewquestion/0?count=10", "POST", $("#questionform").serialize(), $("#previewBtn"), $(), showQuestionPreview, "");
+                            });
+                        });
+                    </script>
+                </form>
+            </div>
+        </div>
+    </section>
+    <table hidden>
+        <tbody id="variablesample">
+            <tr>
+                <td>
+                    <input type="text" class="form-control form-control-sm monofont text-end ms-auto" name="varname[__index__]" value="a" placeholder="a">
+                </td>
+                <td style="display: grid; place-items: center; width: 10%;">
+                    <span class="mx-2">=</span>
+                </td>
+                <td style="width: 75%;">
+                    <input type="text" class="form-control form-control-sm monofont text-start me-auto" name="varval[__index__]" value="rng.randint(0, 100)" placeholder="rng.randint(0, 100)">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="modifierssample" hidden>
+        <input type="text" class="form-control form-control-sm monofont mb-1" name="modifiers[__index__]">
+    </div>
+    <div id="choicesample" hidden>
+        <input type="text" class="form-control form-control-sm monofont mb-1" name="choices[__index__]">
+    </div>
+    <div id="statementsample" hidden>
+        <textarea name="statement[__index__]" cols="30" rows="1" form="__form__" class="form-control form-control-sm monofont mb-2" placeholder="Statement" required></textarea>
+    </div>
+{% endblock %}
+
+{% block head %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            messageStyle: "none",
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/SVG"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            },
+            SVG: {
+                scale: 90,
+                font: "STIX-Web",
+                blacker: 0,
+                styles: {
+                    ".MathJax_SVG_Display": {
+                        margin: 0
+                    }
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js">
+    </script>
+    <script type="text/javascript">
+        MathJax.Hub.Register.StartupHook("End",function () {
+            window.status = "amready";
+        });
+    </script>
+{% endblock %}

@@ -1,3 +1,7 @@
+import random
+import string
+from typing import Counter
+from sqlalchemy.sql.expression import null
 from extensions import db, random_password
 from sqlalchemy import Column, Integer, Text, Boolean, Date, ForeignKey, Table, UniqueConstraint, TIMESTAMP
 from sqlalchemy.dialects.postgresql import JSONB
@@ -122,3 +126,34 @@ class Order(db.Model):
     name = Column(Text, nullable=False)
     session_id = Column(Text, unique=True, nullable=False)
     info = Column(JSONB)
+
+class QuestionType(db.Model):
+    __tablename__ = "questiontypes"
+    id = Column(Integer, primary_key=True)
+    test = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    info = Column(JSONB, nullable=False)
+    __table_args__ = (UniqueConstraint("test", "name", name="testquestion_constraint"),)
+
+class Test(db.Model):
+    __tablename__ = "tests"
+    id = Column(Integer, primary_key=True)
+    test = Column(Text, nullable=False)
+    info = Column(JSONB, nullable=False)
+
+class TestSession(db.Model):
+    __tablename__ = "testsessions"
+    id = Column(Integer, primary_key=True)
+    test_session_id = Column(Text, unique=True, nullable=False)
+    test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id"))
+    started = Column(TIMESTAMP)
+    info = Column(JSONB, nullable=False)
+
+    def generateSessionId(self):
+        sid = ""
+        while not sid:
+            sid = "".join([random.choice(string.ascii_letters + string.digits) for _ in range(100)])
+            if TestSession.query.filter_by(test_session_id=sid).first():
+                sid = ""
+        self.test_session_id = sid

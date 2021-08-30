@@ -38,6 +38,7 @@
                             <th>Name</th>
                             <th>Grade</th>
                             <th><small>Number Sense</small></th>
+                            <th><small>Calculator</small></th>
                             <th><small>Math</small></th>
                             <th><small>Science</small></th>
                         </tr>
@@ -48,13 +49,23 @@
                                 <td></td>
                                 <td>{{ student.first_name ~ ' ' ~ student.last_name }}</td>
                                 <td>{{ ext.ordinal(student.grade) }}</td>
-                                {% for test in ['NS', 'GM', 'GS'] %}
-                                    <td>
-                                        {% if data[student.id] and data[student.id][test] %}
-                                            <span>✓</span>
-                                        {% endif %}
-                                    </td>
-                                {% endfor %}
+                                {% if 6 <= student.grade <= 8 %}
+                                    {% for test in ['NS', 'CA', 'GM', 'GS'] %}
+                                        <td>
+                                            {% if data[student.id] and data[student.id][test] %}
+                                                <span>✓</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for test in ['NS', '', 'GM', 'GS'] %}
+                                        <td>
+                                            {% if test and data[student.id] and data[student.id][test] %}
+                                                <span>✓</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                {% endif %}
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -19,6 +19,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 # app.config['SQLALCHEMY_ECHO'] = True
+db.app = app
 db.init_app(app)
 
 app.config["SESSION_PERMANENT"] = True
@@ -53,8 +54,9 @@ from routes.admin import main as adminRoutes
 from routes.account import main as accountRoutes
 from routes.txmcvirtual.main import main as txmcVirtualMainRoutes
 from routes.txmcvirtual.account import main as txmcVirtualAccountRoutes
+from routes.virtualtest.main import main as virtualTestMainRoutes
 
-for route in [mainRoutes, tourneyMainRoutes, tourneyOwnerRoutes, tourneyAccountRoutes, adminRoutes, accountRoutes, txmcVirtualMainRoutes, txmcVirtualAccountRoutes]:
+for route in [mainRoutes, tourneyMainRoutes, tourneyOwnerRoutes, tourneyAccountRoutes, adminRoutes, accountRoutes, txmcVirtualMainRoutes, txmcVirtualAccountRoutes, virtualTestMainRoutes]:
     app.register_blueprint(route)
 
 app.add_template_global(extensions, name="ext")

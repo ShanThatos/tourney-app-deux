@@ -1,0 +1,78 @@
+{% extends "main/layout.html" %}
+
+{% block title %} All Questions {% endblock %}
+
+{% block main %}
+    <style>
+        .monofont {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+        }
+
+        .infoviewer > textarea {
+            overflow: hidden;
+            height: 70px;
+            min-width: 400px;
+            transition: height .5s ease-in-out 0s;
+        }
+    </style>
+    <section class="fullspace d-flex flex-column justify-content-center align-items-center">
+        <div class="container-md" style="min-width: fit-content;">
+            <div class="text-center">
+                <h2>All Questions</h2>
+                <a href="/virtualtest/addquestion" class="btn btn-primary btn-lg px-5 m-2">Add Question</a>
+            </div>
+            <div class="mx-auto">
+                <table class="table table-light table-bordered table-sm border border-3 border-dark">
+                    <thead>
+                        <tr>
+                            <td class="text-center">#:ID</td>
+                            <td class="text-center">Test</td>
+                            <td>Name</td>
+                            <td><small>Location</small></td>
+                            <td>Info</td>
+                            <td class="text-center">Options</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                            <tr>
+                                <td class="text-center">{{ loop.index }} : {{ question.id }}</td>
+                                <td class="text-center">{{ question.test }}</td>
+                                <td>{{ question.name }}</td>
+                                <td>
+                                    {% for mod in question.info.modifiers %}
+                                        {% if mod.startswith("locations ") %}
+                                            {{ mod[10:] }} <br>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <div class="infoviewer">
+                                        <textarea class="form-control monofont" style="font-size: 15px; line-height: .9em;" rows="5" disabled>{{ prettify(question.info, indent=2) }}</textarea>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/virtualtest/editquestion/{{ question.id }}" class="btn btn-primary btn-sm px-3">Edit</a>
+                                    <a href="/virtualtest/addquestion?dup={{ question.id }}" class="btn btn-info btn-sm px-3 mt-2">Dupe</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(() => {
+            $(".infoviewer").hover(
+                (e) => {
+                    var textarea = $(e.currentTarget).children("textarea")[0];
+                    textarea.style.height = textarea.scrollHeight + "px";
+                }, (e) => {
+                    var textarea = $(e.currentTarget).children("textarea")[0];
+                    textarea.style.height = "";
+                });
+        });
+    </script>
+{% endblock %}

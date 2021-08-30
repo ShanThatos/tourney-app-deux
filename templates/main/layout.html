@@ -29,103 +29,105 @@
             Number Sense, Math, and Science. On this website, you can register your students for all of the competitions available, view your students' scores,
             and check the realtime updated results" />
     </head>
-    <body>
-        <nav class="navbar navbar-expand-lg nav-bg-img fixed-top" style="padding: 0;">
-            <div class="container-md text-dark">
-                <a href="/" class="navbar-brand">
-                    <img src="/static/imgs/favicon.png" width="48px">
-                    <div style="font-weight: 600; display: inline-block; vertical-align: middle;">Texas Math Contests</div>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nvtoggle" aria-controls="nvtoggle" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end pe-4" id="nvtoggle">
-                    <ul class="navbar-nav justify-content-end ml-auto" style="white-space: nowrap;">
-                        {% set items = [("/", "Home"), ("/register", "Sign Up"), ("/login", "Login"), ("", "Tournaments")] %}
-                        {% if session.id %}
-                            {% if session.admin %}
-                                {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Admin"), ("", "Account")] %}
-                            {% else %}
-                                {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Account")] %}
+    {% block body %}
+        <body>
+            <nav class="navbar navbar-expand-lg nav-bg-img fixed-top" style="padding: 0;">
+                <div class="container-md text-dark">
+                    <a href="/" class="navbar-brand">
+                        <img src="/static/imgs/favicon.png" width="48px">
+                        <div style="font-weight: 600; display: inline-block; vertical-align: middle;">Texas Math Contests</div>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nvtoggle" aria-controls="nvtoggle" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end pe-4" id="nvtoggle">
+                        <ul class="navbar-nav justify-content-end ml-auto" style="white-space: nowrap;">
+                            {% set items = [("/", "Home"), ("/register", "Sign Up"), ("/login", "Login"), ("", "Tournaments")] %}
+                            {% if session.id %}
+                                {% if session.admin %}
+                                    {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Admin"), ("", "Account")] %}
+                                {% else %}
+                                    {% set items = [("/", "Home"), ("/students", "Students"), ("", "Tournaments"), ("", "Account")] %}
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                        {% if session.dataentry_id %}
-                            {% set items = [("/", "Home"), ("/dataentry/scores", "Scores"), ("/dataentry/tiebreakers", "Tiebreakers"), ("/tournaments/{{ session.tourney_id }}/results", "Results"), ("/logout", "Logout")] %}
-                        {% endif %}
-                        {% for href, text in items %}
-                            {% if text == "Tournaments" %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Tournaments</a>
-                                    <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
-                                        <li><a href="/tournaments" class="dropdown-item py-1 border">All Tournaments</a></li>
-                                        <li><a href="/txmcvirtual/register" class="dropdown-item py-1 border">Register For TXMC Virtual Tournaments</a></li>
-                                        <li><a href="/txmcvirtual/register/adv" class="dropdown-item py-1 border">Virtual Tournament Advanced Registration</a></li>
-                                    </ul>
-                                </li>
-                            {% elif text == "Admin" %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Admin</a>
-                                    <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
-                                        <li><a href="/admin/tournaments/create" class="dropdown-item py-1 border">Create A Tournament</a></li>
-                                        <li><a href="/admin/schoolgroups" class="dropdown-item py-1 border">School Groups</a></li>
-                                        <li><a href="/admin/testgenerator" class="dropdown-item py-1 border">Test Generator</a></li>
-                                        <li><a href="/admin/accounts" class="dropdown-item py-1 border">Accounts</a></li>
-                                    </ul>
-                                </li>
-                            {% elif text == "Account" %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Account</a>
-                                    <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
-                                        <li><a href="/account" class="dropdown-item py-1 border">Account Settings</a></li>
-                                        <li><a href="/logout" class="dropdown-item py-1 border">Logout</a></li>
-                                    </ul>
-                                </li>
-                            {% else %}
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="{{ href }}">{{ text }}</a>
-                                </li>
+                            {% if session.dataentry_id %}
+                                {% set items = [("/", "Home"), ("/dataentry/scores", "Scores"), ("/dataentry/tiebreakers", "Tiebreakers"), ("/tournaments/{{ session.tourney_id }}/results", "Results"), ("/logout", "Logout")] %}
                             {% endif %}
-                        {% endfor %}
-                    </ul>
+                            {% for href, text in items %}
+                                {% if text == "Tournaments" %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Tournaments</a>
+                                        <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
+                                            <li><a href="/tournaments" class="dropdown-item py-1 border">All Tournaments</a></li>
+                                            <li><a href="/txmcvirtual/register" class="dropdown-item py-1 border">Register For TXMC Virtual Tournaments</a></li>
+                                            <li><a href="/txmcvirtual/register/adv" class="dropdown-item py-1 border">Virtual Tournament Advanced Registration</a></li>
+                                        </ul>
+                                    </li>
+                                {% elif text == "Admin" %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Admin</a>
+                                        <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
+                                            <li><a href="/admin/tournaments/create" class="dropdown-item py-1 border">Create A Tournament</a></li>
+                                            <li><a href="/admin/schoolgroups" class="dropdown-item py-1 border">School Groups</a></li>
+                                            <li><a href="/admin/testgenerator" class="dropdown-item py-1 border">Test Generator</a></li>
+                                            <li><a href="/admin/accounts" class="dropdown-item py-1 border">Accounts</a></li>
+                                        </ul>
+                                    </li>
+                                {% elif text == "Account" %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" role="button">Account</a>
+                                        <ul class="dropdown-menu dropdown-menu-end text-end" style="font-size: 1.2rem; right: 0!important;">
+                                            <li><a href="/account" class="dropdown-item py-1 border">Account Settings</a></li>
+                                            <li><a href="/logout" class="dropdown-item py-1 border">Logout</a></li>
+                                        </ul>
+                                    </li>
+                                {% else %}
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="{{ href }}">{{ text }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
+            </nav>
+            <div class="flex-grow-1" style="padding-top: 60px; padding-bottom: 30px;">
+                {% block main %}{% endblock %}
             </div>
-        </nav>
-        <div class="flex-grow-1" style="padding-top: 60px; padding-bottom: 30px;">
-            {% block main %}{% endblock %}
-        </div>
-        {% block footer %}
-            <div class="m-0 text-white w-100" style="background-color: darkblue;">
-                <div class="container-md py-4">
-                    <div class="row">
-                        <div class="col-lg-5 text-center">
-                            <h2 class="mb-4">Texas Math Contests</h2>
-                        </div>
-                        <div class="col-lg-7 text-left" style="font-size: .8em;">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h5>CONTACT</h5>
-                                    <a href="/contact" style="color: rgb(194, 236, 255);"><i class="far fa-comment"></i> Contact Form</a>
-                                    <br>
-                                    <a href="mailto:texasmathcontests@gmail.com" style="color: rgb(194, 236, 255);"><i class="far fa-envelope"></i> texasmathcontests@gmail.com</a>
-                                    <br>
-                                    <a href="tel:7138254004" style="color: rgb(194, 236, 255);"><i class="fas fa-phone"></i> (713) 825-4004</a>
-                                </div>
-                                <div class="col-6 border-start border-white border-3">
-                                    <h5>LINKS <i class="fas fa-link"></i></h5>
-                                    <div class="d-flex flex-row flex-wrap align-content-start pe-2">
-                                        {% for href, text in [("/register", "REGISTER"), ("/login", "LOGIN"),
-                                            ("/students", "STUDENTS"), ("/tournaments", "TOURNAMENTS"), ("/contact", "CONTACT US"),
-                                            ("/txmcvirtual/register", "TXMC VIRTUAL REGISTRATION")] %}
-                                            <a href="{{ href }}" class="btn-link" style="margin-right: 20px; color: rgb(194, 236, 255);">{{ text }}</a>
-                                        {% endfor %}
+            {% block footer %}
+                <div class="m-0 text-white w-100" style="background-color: darkblue;">
+                    <div class="container-md py-4">
+                        <div class="row">
+                            <div class="col-lg-5 text-center">
+                                <h2 class="mb-4">Texas Math Contests</h2>
+                            </div>
+                            <div class="col-lg-7 text-left" style="font-size: .8em;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5>CONTACT</h5>
+                                        <a href="/contact" style="color: rgb(194, 236, 255);"><i class="far fa-comment"></i> Contact Form</a>
+                                        <br>
+                                        <a href="mailto:texasmathcontests@gmail.com" style="color: rgb(194, 236, 255);"><i class="far fa-envelope"></i> texasmathcontests@gmail.com</a>
+                                        <br>
+                                        <a href="tel:7138254004" style="color: rgb(194, 236, 255);"><i class="fas fa-phone"></i> (713) 825-4004</a>
+                                    </div>
+                                    <div class="col-6 border-start border-white border-3">
+                                        <h5>LINKS <i class="fas fa-link"></i></h5>
+                                        <div class="d-flex flex-row flex-wrap align-content-start pe-2">
+                                            {% for href, text in [("/register", "REGISTER"), ("/login", "LOGIN"),
+                                                ("/students", "STUDENTS"), ("/tournaments", "TOURNAMENTS"), ("/contact", "CONTACT US"),
+                                                ("/txmcvirtual/register", "TXMC VIRTUAL REGISTRATION")] %}
+                                                <a href="{{ href }}" class="btn-link" style="margin-right: 20px; color: rgb(194, 236, 255);">{{ text }}</a>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="mt-4 w-100 text-center fs-6">Web Application Developed by Shanth Koka</div>
                     </div>
-                    <div class="mt-4 w-100 text-center fs-6">Web Application Developed by Shanth Koka</div>
                 </div>
-            </div>
-        {% endblock %}
-    </body>
+            {% endblock %}
+        </body>
+    {% endblock %}
 </html>

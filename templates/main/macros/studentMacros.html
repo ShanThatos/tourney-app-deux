@@ -14,10 +14,10 @@
             <span class="sttext" name="grade">{{ student.grade }}</span>
         </td>
         <td class="d-flex flex-row justify-content-center">
-            <button class="btn btn-primary btn-sm me-1" onclick="edit(this, {{ student.id }})">
+            <button type="button" class="btn btn-primary btn-sm me-1" onclick="edit(this, {{ student.id }})">
                 <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-success btn-sm me-1" onclick="save(this, {{ student.id }})" hidden>
+            <button type="button" class="btn btn-success btn-sm me-1" onclick="save(this, {{ student.id }})" hidden>
                 <i class="far fa-save"></i>
             </button>
             <form method="DELETE" onsuccess="deleteRow" osargs="{{ student.id }}" confirmDeleteMessage="Are you sure you want to delete {{ student.first_name ~ ' ' ~ student.last_name }}?" enhance>

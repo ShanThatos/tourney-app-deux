@@ -33,7 +33,7 @@
 
 {% macro school_card(school) %}
     <div class="peachcard rounded mb-2 p-1" shid="{{ school.id }}">
-        <button class="btn shadow-none" data-bs-toggle="collapse" data-bs-target="#collapse{{ school.id }}">
+        <button type="button" class="btn shadow-none" data-bs-toggle="collapse" data-bs-target="#collapse{{ school.id }}">
             <h6 class="m-0">
                 <u>{{ school.name }} - {{ school.students.count() }}</u>
             </h6>

@@ -157,7 +157,9 @@
         <td>{{ coach.email }}</td>
         <td>Collaborator</td>
         <td>
-            <button class="btn btn-danger btn-sm"
+            <button 
+                type="button"
+                class="btn btn-danger btn-sm"
                 url="/tournaments/{{ tourney.id }}/collaborators"
                 method="DELETE"
                 data='{"coach_id": {{ coach.id }}}'
@@ -216,7 +218,9 @@
         <td>{{ account.password }}</td>
         <td>
             <a href="/tournaments/{{ account.tourney_id }}/dataentry?id={{ account.id }}" class="btn btn-primary btn-sm">Login</a>
-            <button class="btn btn-danger btn-sm"
+            <button 
+                type="button"
+                class="btn btn-danger btn-sm"
                 url="/tournaments/{{ account.tourney_id }}/dataentry"
                 method="DELETE"
                 data='{"id": {{ account.id }}}'

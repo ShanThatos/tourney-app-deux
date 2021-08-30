@@ -1,0 +1,437 @@
+{% extends "main/layout.html" %}
+
+{% block title %} NS {{ title }} {% endblock %}
+
+{% block body %}
+    <body>
+        <style>
+            kbd {
+                background-color: #eee;
+                border-radius: 3px;
+                border: 1px solid #b4b4b4;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+                color: #333;
+                display: inline-block;
+                font-size: .85em;
+                font-weight: 700;
+                line-height: 1;
+                padding: 2px 4px;
+                white-space: nowrap;
+                cursor: pointer;
+            }
+
+            .btn-link {
+                cursor: pointer;
+            }
+
+            .hideoverlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+
+            .show {
+                padding-top: 20px;
+                padding-bottom: 20px;
+                background-color: rgb(189, 247, 255);
+                border-bottom: solid black 2px;
+                border-top: solid black 2px;
+                transition: padding .2s ease-in .2s;
+            }
+
+            .hide {
+                padding-top: 5px;
+                padding-bottom: 5px;
+                transition: padding .2s ease-out .2s;
+            }
+
+            .hide:hover {
+                background-color: rgb(209, 250, 255);
+            }
+
+            .numinput {
+                text-align: right;
+                border: solid black 3px;
+                border-radius: 10px;
+                padding: 10px;
+                font-weight: 600;
+            }
+            .numinput:focus {
+                outline: none;
+                box-shadow: 0 0 3px 3px rgb(196, 222, 255);
+            }
+
+            .answerline {
+                min-width: 60px;
+                min-height: 36px;
+                border-bottom: solid black 2px;
+                margin-left: 5px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .inputDirection {
+                line-height: 30px;
+            }
+
+            .skipped::before {
+                content: "⚑";
+                color: rgb(255, 92, 192);
+            }
+        </style>
+        <div class="flex-grow-1 m-5 bg-light rounded shadow border border-dark border-3" style="position: relative; min-width: 1250px; min-height: 600px;">
+            <div class="h-100 w-100 d-flex flex-row justify-content-around align-items-stretch" style="position: absolute;">
+                <div class="d-flex flex-column align-items-stretch border" style="min-width: 200px;">
+                    <div class="text-center p-1 border-bottom border-dark border-2">
+                        <h5 class="mb-0">All Questions</h5>
+                    </div>
+                    <div class="flex-grow-1 overflow-auto">
+                        {% for i in range(1, 81) %}
+                            <div class="m-1 ms-2">
+                                <label id="L{{ i }}" style="width: 10px; vertical-align: middle;"></label>
+                                <label>&gt</label> 
+                                <a class="btn-link" onclick="switchQuestion('{{ i }}')">Question {{ i }}</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="flex-fill d-flex flex-column align-items-stretch border" style="font-size: 24px; min-width: 400px;">
+                    <div class="text-center p-1 border-bottom border-dark border-2">
+                        <h5 class="mb-0">Current Question</h5>
+                    </div>
+                    <div class="flex-grow-1 overflow-auto" style="font-family: 'Times New Roman', Times, serif;">
+                        <div style="height: 50%;"></div>
+                        {% for i in range(1, 81) %}
+                            <div class="question hide"
+                                id="Q{{ i }}" 
+                                style="position: relative; cursor: pointer;" 
+                                onclick="switchQuestion('{{ i }}')"
+                                answertype="numberinput;fractioninput;mixednumberinput">
+                                <div class="mx-3">
+                                    <div class="text-end me-2 d-inline-block" style="width: 40px; vertical-align: top;">
+                                        <label>{{ i }})</label>
+                                    </div>
+                                    <div class="d-inline-block" style="width: calc(95% - 40px);">
+                                        <span class="questionstatement align-top d-inline">
+                                            {% if i % 3 == 0 %}
+                                                $97 \times 94 =$
+                                            {% elif i % 3 == 1 %}
+                                                The median of a trapezoid with bases $87$ and $55$ is
+                                            {% else %}
+                                                The coefficient of the $x^2$ term  in the expanded form of $(3x^2 + x + 2)(3x^2 + 2x - 3)$ is 
+                                            {% endif %}
+                                        </span>
+                                        <span class="answerline text-center d-inline-block"></span>
+                                        <span class="answerformat align-top d-inline">(mixed number)</span>
+                                    </div>
+                                </div>
+                                <div class="hideoverlay"></div>
+                            </div>
+                        {% endfor %}
+                        <div style="height: 80%;"></div>
+                    </div>
+                </div>
+                <div class="d-flex flex-column justify-content-between align-items-stretch border" style="min-width: 350px;">
+                    <div class="flex-grow-1 d-flex flex-column align-items-stretch">
+                        <div class="text-center p-1 border-bottom border-dark border-2">
+                            <h5 class="mb-0">Timer</h5>
+                        </div>
+                        <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center" style="font-size: 50px;">
+                            <span>10:00</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 d-flex flex-column align-items-stretch">
+                        <div class="text-center p-1 border-bottom border-top border-dark border-2 mb-2">
+                            <h5 class="mb-0">Your Answer</h5>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center" style="font-family: 'Times New Roman', Times, serif;">
+                            <div id="answerarea" class="d-flex flex-column justify-content-center align-items-center px-3" style="min-height: 200px;"></div>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden d-flex flex-column align-items-stretch" style="font-size: 20px;">
+                        <div class="text-center p-1 border-bottom border-top border-dark border-2">
+                            <h5 class="mb-0">Keyboard Shortcuts</h5>
+                        </div>
+                        <div class="flex-grow-1 overflow-auto" style="display: grid; place-items: center;">
+                            <div class="p-2">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="changeDirection();">D</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Change Direction</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd>Space</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Next Box</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="nextQuestion();">Enter</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Next Question</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="skipQuestion();">S</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Skip & Flag Question</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="useAnswerInput('numberinput');">N</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Answer Number</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="useAnswerInput('fractioninput');">F</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Answer Fraction</label></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: right;"><kbd onclick="useAnswerInput('mixednumberinput');">M</kbd></td>
+                                            <td><label style="vertical-align: middle; margin-left: 5px;">Answer Mixed Number</label></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div hidden>
+            <div id="data" currentQuestion="1"></div>
+            <div id="numberinput_sample" class="sample">
+                <div class="numberinput d-flex flex-column align-items-center">
+                    <input type="text" placeholder="#" class="numinput numberinput" style="font-size: 30px; width: 150px;">
+                    <label class="inputDirection" style="font-size: 40px;">→</label>
+                </div>
+            </div>
+            <div id="fractioninput_sample" class="sample">
+                <div class="fractioninput d-flex flex-column align-items-center">
+                    <input type="text" placeholder="#" class="numinput fractioninput" style="font-size: 28px; width: 80px;">
+                    <div class="border-bottom border-dark border-5 my-2" style="width: 90px;"></div>
+                    <input type="text" placeholder="#" class="numinput fractioninput" style="font-size: 28px; width: 80px;">
+                    <label class="inputDirection" style="font-size: 40px;">→</label>
+                </div>
+            </div>
+            <div id="mixednumberinput_sample" class="sample">
+                <div class="mixednumberinput d-flex flex-column align-items-center">
+                    <div class="d-flex flex-row align-items-center">
+                        <input type="text" placeholder="#" class="numinput mixednumberinput" style="font-size: 28px; width: 80px;">
+                        <div class="d-flex flex-column align-items-center ms-3">
+                            <input type="text" placeholder="#" class="numinput mixednumberinput" style="font-size: 28px; width: 80px;">
+                            <div class="border-bottom border-dark border-5 my-2" style="width: 90px;"></div>
+                            <input type="text" placeholder="#" class="numinput mixednumberinput" style="font-size: 28px; width: 80px;">
+                        </div>
+                    </div>
+                    <label class="inputDirection" style="font-size: 40px;">→</label>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var currentQuestion = "0";
+        var submitQueue = [];
+        $(document).ready(() => {
+            var data = $("#data");
+            switchQuestion(data.attr("currentQuestion"));
+            $(document).on("keypress", (e) => {
+                const key = e.which || e.keyCode;
+                var preventDefault = true;
+                if (key == ascii("d") || key == ascii("D")) {
+                    e.preventDefault();
+                    changeDirection(e);
+                } else if (key == 13) {
+                    e.preventDefault();
+                    nextQuestion();
+                } else if (key == ascii("s") || key == ascii("S")) {
+                    e.preventDefault();
+                    skipQuestion();
+                } else if (key == ascii("n") || key == ascii("N")) {
+                    e.preventDefault();
+                    useAnswerInput("numberinput");
+                } else if (key == ascii("f") || key == ascii("F")) {
+                    e.preventDefault();
+                    useAnswerInput("fractioninput");
+                } else if (key == ascii("m") || key == ascii("M")) {
+                    e.preventDefault();
+                    useAnswerInput("mixednumberinput");
+                } else if (key == ascii(" ") && !$(e.target).hasClass("numinput")) {
+                    e.preventDefault();
+                    $("#answerarea .numinput")[0].focus();
+                }
+            });
+        });
+
+        function configureKeyPresses() {
+            const inputs = $("#answerarea .numinput");
+            for (var i = 0; i < inputs.length; i++) {
+                var input = $(inputs[i]);
+                const iCopy = i;
+                if (!input.hasClass("configured")) {
+                    input.on("keypress", (e) => {
+                        const key = e.which || e.keyCode;
+                        var allowInput = false;
+                        allowInput |= ascii("0") <= key && key <= ascii("9");
+                        allowInput |= key == ascii(".") && !$(e.target).val().includes(".") && $(e.target).hasClass("numberinput");
+                        allowInput |= key == ascii("-") && $(e.target).val().length == 0;
+
+                        if (!allowInput)
+                            e.preventDefault();
+                        else if ($(e.target).hasClass("righttoleft")) {
+                            e.target.selectionStart = e.target.selectionEnd = 0;
+                            setTimeout(function() { e.target.selectionStart = e.target.selectionEnd = 0; }, 0);
+                        }
+                    }).on("keydown", (e) => {
+                        const key = e.which || e.keyCode;
+                        const numInput = $(e.target);
+                        if (key == 8 && numInput.hasClass("righttoleft") && numInput.val().length > 0)
+                            e.target.selectionStart = e.target.selectionEnd = 1;
+                        if (key == ascii(" ")) {
+                            e.preventDefault();
+                            inputs[(iCopy + 1) % inputs.length].focus();
+                        }
+                    });
+                    input.addClass("configured");
+                }
+            }
+        }
+
+        function changeDirection(e) {
+            $("#answerarea .numinput").toggleClass("righttoleft");
+            const dirRightToLeft = $("#answerarea .numinput").hasClass("righttoleft");
+            if (e && dirRightToLeft) {
+                const target = $(e.target);
+                if (target.hasClass("numinput"))
+                    e.target.selectionStart = e.target.selectionEnd = 0;
+            }
+            $("#answerarea .inputDirection").text(dirRightToLeft ? "←" : "→");
+        }
+
+        const ascii = s => s.charCodeAt();
+
+        function useAnswerInput(type) {
+            const cq = $("#Q" + currentQuestion);
+            const answertype = cq.attr("answertype").split(";");
+            if (answertype.includes(type) && $("#answerarea ." + type).length == 0) {
+                $("#answerarea").html($("#" + type + "_sample").html());
+                configureKeyPresses();
+                $("#answerarea .numinput")[0].focus();
+                setTimeout(() => { $("#answerarea .numinput").val(""); }, 0);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion = parseInt(currentQuestion);
+
+            var question = $("#Q" + currentQuestion);
+            if (!question.hasClass("answered")) {
+                var type =  $("#answerarea .numberinput").length ? "numberinput" : 
+                            $("#answerarea .fractioninput").length ? "fractioninput" :
+                            $("#answerarea .mixednumberinput").length ? "mixednumberinput" : "error";
+                var data = {
+                    question: currentQuestion, 
+                    type: type, 
+                    answer: []
+                };
+                
+                const inputs = $("#answerarea .numinput");
+                for (var i = 0; i < inputs.length; i++) {
+                    var input = $(inputs[i]).val();
+                    if (input.replaceAll(".", "").replaceAll("-", "")) data.answer.push(input);
+                    else return;
+                }
+                
+                submitQueue.push(data);
+
+                // set timeout to submit function
+
+                formatAnswer(data);
+
+                $("#L" + currentQuestion).removeClass("skipped");
+                question.addClass("answered");
+            }
+
+            switchQuestion(currentQuestion + 1);
+        }
+        function skipQuestion() {
+            currentQuestion = parseInt(currentQuestion);
+            if (!$("#Q" + currentQuestion).hasClass("answered"))
+                $("#L" + currentQuestion).addClass("skipped");
+            switchQuestion(currentQuestion + 1);
+        }
+
+        function formatAnswer(data) {
+            var answerline = $("#Q" + data.question + " .answerline");
+            if (data.type == "numberinput")
+                answerline.html("$" + data.answer[0] + "$");
+            else if (data.type == "fractioninput")
+                answerline.html("$\\frac{" + data.answer[0] + "}{" + data.answer[1] + "}$");
+            else if (data.type == "mixednumberinput")
+                answerline.html("$" + data.answer[0] + "\\frac{" + data.answer[1] + "}{" + data.answer[2] + "}$");
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, answerline[0]]);
+        }
+
+        function switchQuestion(qnum) {
+            if (qnum > 80) return;
+            if (currentQuestion != qnum) {
+                $("#Q" + currentQuestion).removeClass("show");
+                $("#Q" + currentQuestion).addClass("hide");
+                currentQuestion = qnum;
+                const nextQuestion = $("#Q" + currentQuestion);
+                nextQuestion.removeClass("hide");
+                nextQuestion.addClass("show");
+                if (!$("#Q" + currentQuestion).hasClass("answered")) {
+                    const answertype = nextQuestion.attr("answertype").split(";");
+                    $("#answerarea").html($("#" + answertype[0] + "_sample").html());
+                    configureKeyPresses();
+                    $("#answerarea input")[0].focus();
+                } else
+                    $("#answerarea").html("");
+            }
+            setTimeout(() => { scrollFocus("#Q" + currentQuestion); }, 50);
+        }
+        function scrollFocus(id) {
+            var el = $(id), parentEl = el.parent();
+
+            var elOffset = el.offset().top + parentEl.scrollTop();
+            var parentHeight = parentEl.height();
+            
+            var offset = elOffset - (parentHeight * .45);
+            
+            parentEl.stop(true, true);
+            parentEl.animate({scrollTop:offset}, 400);
+        }
+    </script>
+{% endblock %}
+
+
+{% block head %}
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            messageStyle: "none",
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/SVG"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            },
+            SVG: {
+                scale: 90,
+                font: "STIX-Web",
+                blacker: 0,
+                styles: {
+                    ".MathJax_SVG_Display": {
+                        margin: 0
+                    }
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js">
+    </script>
+    <script type="text/javascript">
+        MathJax.Hub.Register.StartupHook("End",function () {
+            window.status = "amready";
+        });
+    </script>
+{% endblock %}

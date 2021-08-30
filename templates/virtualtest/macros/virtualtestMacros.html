@@ -1,0 +1,17 @@
+{% macro nsquestions(questions, includeAnswer=False) %}
+    {% for question in questions %}
+        <div class="nsquestion">
+            <div class="d-inline-block">
+                <span class="questionstatement align-top d-inline">
+                    {{ question.statement }}
+                </span>
+                <span class="answerline text-center d-inline-block">
+                    {% if includeAnswer %}
+                        {{ question.answer }}
+                    {% endif %}
+                </span>
+                <span class="answerformat align-top d-inline">{{ question.units }}</span>
+            </div>
+        </div>
+    {% endfor %}
+{% endmacro %}
